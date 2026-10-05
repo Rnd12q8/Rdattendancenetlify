@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>الحضور والانصراف — البحث والتطوير</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B2A4A;
+    --navy-2:#123A63;
+    --gold:#B8912F;
+    --gold-lt:#E7D6A0;
+    --paper:#F8F6F0;
+    --panel:#FFFFFF;
+    --line:#E4DEC9;
+    --text-0:#1C2A36;
+    --text-1:#5B6A76;
+    --text-2:#94A1AA;
+    --ok:#2C7A4B;
+    --ok-bg:#E5F3EA;
+    --warn:#A31E22;
+    --warn-bg:#FBE7E7;
+    --leave:#8A6D1D;
+    --leave-bg:#F5EDD6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;background:var(--paper);color:var(--text-0);font-family:'Tajawal',sans-serif;}
+  button{font-family:inherit;cursor:pointer;}
+  textarea,input{font-family:inherit;}
+  .app{max-width:1180px;margin:0 auto;padding: 18px 16px 60px;}
+
+  header.top{
+    display:flex;align-items:center;gap:18px;
+    background:linear-gradient(135deg, var(--navy), var(--navy-2));
+    border-radius:16px;
+    padding: 20px 26px;
+    color:#fff;
+    box-shadow:0 6px 18px rgba(11,42,74,0.18);
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::after{
+    content:'';position:absolute;inset:0;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 4px, transparent 4px);
+    opacity:0.5;
+  }
+  header.top img{
+    width:64px;height:64px;border-radius:50%;flex-shrink:0;
+    box-shadow:0 0 0 3px rgba(255,255,255,0.25);
+  }
+  header.top .titles{flex:1;min-width:0;}
+  header.top h1{font-family:'Cairo',sans-serif;font-weight:700;font-size:20px;}
+  header.top p{font-size:13px;color:var(--gold-lt);margin-top:4px;}
+  header.top .clock{text-align:left;flex-shrink:0;}
+  header.top .clock .t{font-family:'Cairo',sans-serif;font-weight:700;font-size:22px;direction:ltr;}
+  header.top .clock .d{font-size:12px;color:var(--gold-lt);margin-top:2px;}
+
+  nav.tabs{display:flex;gap:8px;margin:18px 0 6px;flex-wrap:wrap;}
+  nav.tabs button{
+    flex:1;min-width:110px;
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:12px;
+    font-family:'Cairo',sans-serif;font-weight:600;font-size:13.5px;
+    color:var(--text-1);
+  }
+  nav.tabs button.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  section{display:none;}
+  section.active{display:block;}
+
+  /* Home dashboard */
+  .home-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(220px,1fr));gap:14px;margin-top:16px;}
+  .home-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:22px 18px;text-align:center;
+  }
+  .home-card .ic{font-size:30px;margin-bottom:10px;}
+  .home-card h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:15px;color:var(--navy);margin-bottom:6px;}
+  .home-card p{font-size:12px;color:var(--text-1);margin-bottom:14px;line-height:1.5;}
+  .home-card button{
+    width:100%;background:var(--navy);color:#fff;border:none;border-radius:9px;
+    padding:11px;font-weight:600;font-size:13px;
+  }
+  .home-danger{margin-top:22px;background:var(--warn-bg);border:1px solid var(--warn);border-radius:14px;padding:16px 18px;}
+  .home-danger h4{font-family:'Cairo',sans-serif;color:var(--warn);font-size:14px;margin-bottom:6px;}
+  .home-danger p{font-size:12px;color:var(--text-1);margin-bottom:10px;}
+  .home-danger button{background:var(--warn);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;}
+
+  /* Calendar view */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px;}
+  .cal-head h2{font-family:'Cairo',sans-serif;font-weight:700;font-size:18px;}
+  .cal-head .yr-nav{display:flex;align-items:center;gap:10px;}
+  .cal-head .yr-nav button{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    width:34px;height:34px;font-size:16px;color:var(--navy);
+  }
+  .months{display:grid;grid-template-columns:repeat(auto-fill, minmax(240px,1fr));gap:14px;}
+  .month-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;}
+  .month-card h3{font-family:'Cairo',sans-serif;font-weight:600;font-size:14px;color:var(--navy);margin-bottom:10px;text-align:center;}
+  .wk{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+  .wk span{font-size:10px;color:var(--text-2);text-align:center;}
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+  .day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:6px;color:var(--text-1);position:relative;}
+  .day.empty{visibility:hidden;}
+  .day.clickable{background:var(--paper);cursor:pointer;}
+  .day.clickable:hover{background:var(--gold-lt);}
+  .day.today{background:var(--navy);color:#fff;font-weight:700;}
+  .day.has-data::after{content:'';position:absolute;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--ok);}
+
+  /* Day / roster shared */
+  .day-head{display:flex;align-items:center;justify-content:space-between;margin:18px 0 14px;flex-wrap:wrap;gap:10px;}
+  .day-head .back{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:9px 16px;font-size:13px;color:var(--navy);font-weight:500;display:flex;align-items:center;gap:6px;
+  }
+  .day-head h2{font-family:'Cairo',sans-serif;font-weight:700;font-size:18px;color:var(--navy);}
+
+  .roster{display:flex;flex-direction:column;gap:10px;}
+  .row{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;
+    display:grid;grid-template-columns: 1.3fr 1fr 1fr auto; gap:12px; align-items:start;
+  }
+  .row .name-wrap{display:flex;align-items:center;gap:8px;}
+  .row .name{font-family:'Cairo',sans-serif;font-weight:600;font-size:15px;}
+  .row .mini-btn{background:none;border:none;color:var(--text-2);font-size:13px;padding:2px 4px;}
+  .cell{display:flex;flex-direction:column;gap:6px;}
+  .cell .label{font-size:11px;color:var(--text-2);}
+  .cell .val{font-size:13px;color:var(--ok);font-weight:600;direction:ltr;text-align:right;}
+  .cell .delay{font-size:11px;font-weight:600;text-align:right;}
+  .cell .delay.late{color:var(--warn);}
+  .cell .delay.early-in, .cell .delay.ontime{color:var(--ok);}
+  .btn-sign{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:12.5px;font-weight:500;}
+  .btn-sign.locked{background:var(--text-2);}
+  .btn-sign.done{background:var(--ok);}
+  .status-badge{
+    border:1px dashed var(--line);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text-1);
+    text-align:center;min-width:78px;
+  }
+  .status-badge.set{background:var(--leave-bg);color:var(--leave);border:1px solid var(--leave);font-weight:600;}
+  .finger-time-row{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:12px;
+  }
+  .finger-time-row label{font-size:12.5px;color:var(--text-1);}
+  .finger-time-row input[type=time]{
+    border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:13px;color:var(--text-0);background:var(--panel);
+  }
+
+  /* Events */
+  .events-toolbar{display:flex;gap:10px;margin:18px 0 14px;flex-wrap:wrap;}
+  .events-toolbar button{
+    background:var(--navy);color:#fff;border:none;border-radius:9px;padding:11px 18px;font-size:13.5px;font-weight:600;
+  }
+  .events-toolbar button.gold{background:var(--gold);}
+  .events-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(240px,1fr));gap:14px;}
+  .event-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .event-card h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:15px;color:var(--navy);margin-bottom:6px;}
+  .event-card .meta{font-size:12px;color:var(--text-1);margin-bottom:4px;}
+  .event-card .actions{display:flex;gap:8px;margin-top:12px;}
+  .event-card .actions button{flex:1;border:none;border-radius:8px;padding:9px;font-size:12.5px;font-weight:600;}
+  .event-card .open-btn{background:var(--navy);color:#fff;}
+  .event-card .del-btn{background:var(--warn-bg);color:var(--warn);}
+  .empty-hint{color:var(--text-2);font-size:13px;text-align:center;padding:30px 10px;}
+
+  .report-section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .report-section h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:15px;color:var(--navy);margin-bottom:10px;}
+  .report-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .report-table th{text-align:right;color:var(--text-2);font-weight:600;font-size:11.5px;padding:6px 8px;border-bottom:1px solid var(--line);}
+  .report-table td{padding:8px;border-bottom:1px solid var(--line);color:var(--text-0);}
+  .report-table td.status-pill{font-size:11.5px;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+  .pill.ok{background:var(--ok-bg);color:var(--ok);}
+  .pill.warn{background:var(--warn-bg);color:var(--warn);}
+  .pill.leave{background:var(--leave-bg);color:var(--leave);}
+  .pill.neutral{background:var(--paper);color:var(--text-2);border:1px solid var(--line);}
+
+  .event-header-block{
+    background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:16px;
+    padding:20px 22px;margin-bottom:16px;
+  }
+  .event-header-block h2{font-family:'Cairo',sans-serif;font-weight:700;font-size:19px;margin-bottom:4px;}
+  .event-header-block .lect{font-size:13px;color:var(--gold-lt);margin-bottom:14px;}
+  .event-time-badge{
+    display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);
+    border-radius:10px;padding:10px 16px;font-family:'Cairo',sans-serif;font-weight:700;font-size:15px;
+  }
+  .event-time-badge span.lbl{font-size:11px;font-weight:400;color:var(--gold-lt);display:block;}
+  .event-header-block .meta-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--gold-lt);}
+
+  .participant-add-row{display:flex;gap:10px;margin-bottom:16px;}
+  .participant-add-row input{
+    flex:1;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:14px;background:var(--panel);
+  }
+  .participant-add-row button{background:var(--gold);color:#fff;border:none;border-radius:9px;padding:0 20px;font-weight:700;font-size:14px;}
+
+  .event-cover{
+    background:linear-gradient(160deg,var(--navy),var(--navy-2));
+    border-radius:22px;padding:44px 28px;text-align:center;color:#fff;
+    margin-top:18px;box-shadow:0 10px 30px rgba(11,42,74,0.25);
+  }
+  .event-cover img{width:88px;height:88px;border-radius:50%;box-shadow:0 0 0 4px rgba(255,255,255,0.25);margin-bottom:18px;}
+  .event-cover h2{font-family:'Cairo',sans-serif;font-weight:900;font-size:26px;margin-bottom:8px;}
+  .event-cover p{font-size:13.5px;color:var(--gold-lt);margin-bottom:18px;}
+  .event-cover .event-time-badge{margin-bottom:6px;}
+  .cover-enter-btn{
+    flex:1;background:var(--gold);color:#fff;border:none;border-radius:12px;
+    padding:15px 34px;font-family:'Cairo',sans-serif;font-weight:700;font-size:15.5px;
+  }
+
+  .date-nav{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:16px;
+  }
+  .date-nav input[type=date]{
+    border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--text-0);background:var(--paper);
+  }
+  .date-chip{
+    background:var(--paper);border:1px solid var(--line);border-radius:20px;
+    padding:6px 14px;font-size:12.5px;color:var(--text-1);cursor:pointer;
+  }
+  .date-chip.active{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600;}
+  .date-nav .today-btn{
+    background:var(--gold);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;
+  }
+
+  .row .drag-handle{
+    cursor:grab; touch-action:none; color:var(--text-2); font-size:16px; padding:2px 6px;
+    user-select:none;
+  }
+  .row.dragging{opacity:0.85; box-shadow:0 8px 20px rgba(0,0,0,0.18); position:relative; z-index:5; border-color:var(--gold);}
+
+  /* Modal */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(11,20,30,0.55);align-items:center;justify-content:center;z-index:50;padding:16px;overflow-y:auto;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--panel);border-radius:16px;padding:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;}
+  .modal h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:16px;margin-bottom:4px;color:var(--navy);}
+  .modal p.sub{font-size:12.5px;color:var(--text-1);margin-bottom:16px;}
+  .modal label.field-label{display:block;font-size:12.5px;color:var(--text-1);margin:12px 0 5px;}
+  .modal input[type=text],.modal input[type=date],.modal input[type=time],.modal textarea{
+    width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;background:var(--paper);color:var(--text-0);
+  }
+  .modal textarea{resize:vertical;min-height:64px;}
+  .sig-canvas-wrap{border:1.5px dashed var(--line);border-radius:10px;background:var(--paper);touch-action:none;}
+  canvas{width:100%;height:180px;display:block;}
+  .face-status{font-size:12.5px;color:var(--text-1);text-align:center;margin-bottom:8px;}
+  .face-status.ok{color:var(--ok);font-weight:600;}
+  .face-status.err{color:var(--warn);font-weight:600;}
+  .cam-wrap{position:relative;border-radius:12px;overflow:hidden;background:#000;border:1.5px solid var(--line);}
+  #camPreview{width:100%;height:280px;display:block;background:#000;}
+  video#camVideo{
+    position:absolute; top:0; left:0; width:100%; height:280px;
+    opacity:0; pointer-events:none;
+  }
+  .cam-frame{position:absolute;inset:16% 26%;border:2px dashed rgba(232,214,160,0.6);border-radius:50%;pointer-events:none;}
+  .cam-rotate-row{display:flex;justify-content:center;margin-top:8px;}
+  .cam-rotate-row button{
+    background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:7px 16px;font-size:12px;color:var(--text-1);
+  }
+  .enroll-note{font-size:12px;color:var(--leave);background:var(--leave-bg);border-radius:8px;padding:8px 10px;margin-top:10px;}
+  .reenroll-link{display:block;width:100%;text-align:center;margin-top:10px;background:none;border:none;font-size:12px;color:var(--text-2);text-decoration:underline;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .modal-actions button{flex:1;padding:11px;border-radius:8px;border:none;font-weight:600;font-size:13.5px;}
+  .modal-actions .clear{background:var(--paper);color:var(--text-1);border:1px solid var(--line);}
+  .modal-actions .confirm{background:var(--navy);color:#fff;}
+  .modal-actions .cancel{background:var(--paper);color:var(--text-1);border:1px solid var(--line);}
+
+  .status-options{display:flex;flex-wrap:wrap;gap:8px;}
+  .status-options button{
+    flex:1 1 30%;text-align:center;padding:11px 8px;border-radius:9px;border:1px solid var(--line);
+    background:var(--paper);font-size:13px;color:var(--text-0);
+  }
+  .status-options button.selected{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  footer.f{text-align:center;margin-top:26px;font-size:11.5px;color:var(--text-2);}
+
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr;gap:8px;}
+    .row .name{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ADMIN PASSWORD GATE — shown only when the page is opened with ?admin=1
+     and this browser session hasn't already unlocked it. This is a basic
+     client-side deterrent (the password lives in this file's source and
+     can be read via view-source), NOT cryptographic security — matches
+     the "simple password is enough for now" requirement, but should not
+     be relied on to protect data that truly must stay confidential. -->
+<div class="overlay" id="adminGateOverlay" style="display:none;">
+  <div class="modal" style="max-width:340px;text-align:center;">
+    <h3>دخول لوحة المسؤول</h3>
+    <p class="sub">هذه الصفحة مخصصة للمسؤول فقط</p>
+    <input type="password" id="adminGateInput" placeholder="كلمة المرور" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:15px;text-align:center;margin:10px 0;">
+    <div id="adminGateError" style="color:var(--warn);font-size:12.5px;display:none;margin-bottom:8px;">كلمة المرور غير صحيحة</div>
+    <button class="confirm" id="adminGateSubmit" style="width:100%;">دخول</button>
+  </div>
+</div>
+
+<!-- PUBLIC PARTICIPANT VIEW — reached only via ?course=CODE. Shows just the
+     course poster and each participant's own check-in/check-out buttons.
+     No status control, no editing, no reordering, no admin data. -->
+<div id="publicCourseView" style="display:none;max-width:720px;margin:0 auto;padding:16px;">
+  <div class="event-cover" id="posterBlock" style="margin-top:8px;">
+    <img id="posterLogo" src="" alt="شعار الإدارة العامة للأدلة الجنائية">
+    <h2 id="posterTitle">—</h2>
+    <p id="posterMeta">—</p>
+    <div class="event-time-badge" id="posterTimeBadge"></div>
+    <div class="meta-row" id="posterExtra" style="justify-content:center;margin-top:14px;"></div>
+  </div>
+  <div class="roster" id="publicRoster" style="margin-top:18px;"></div>
+  <footer class="f">النظام مخصص للاستخدام الداخلي — قسم البحث والتطوير</footer>
+</div>
+
+<div class="app" id="mainApp">
+
+  <header class="top">
+    <img id="mainLogoImg" src="data:image/jpeg;base64,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GRFuADrDzXffbTDNAz/fgf8Ae4FL08w4wwjhz4B7nGf/AP8A/wD0NNJA8dwRQz2c+v8A/wD/AP8A6ok88xX/AP3/APf4+2wNnxfJNqFUo098s8P6vHyS2DEAAAGTIPWwVvw7S6PGKgAAABFTAnxmLqVABBDXPBMj5YGg3NLLPIBABDroE7zzvCM88922A8wvmCDxP80/Qw888tLZTzzzbJBzCziBZDBrJCfZaTTgwDW0jCnD/wA88sG7qHHnXPH9hFdt5pdvZXLPnHQT988888tLtP8Az7+7E5qmuxnqg/N/fcbRxf8AzzzzzwuVHLr7gwgHBBmwiTr7DzjnsT3zzzzzzzy1Rx/9/Vfjkf8A3t9r/wD/AP8AwVb8888888888r2v888bKUdr6xL+888X7k8888888888881y+ww8syQk2Me84wtWt88888888888888svY9Z4wDy80wlGIP8888888888888888888jp39+9eHf7H8888888888888888888888888888888888888888888/8QANREAAQQBAgUCBQMDAwUAAAAAAQACAxEEEiEFEBMiMSBBIzAyUWEUM0AVQkNQgbFSkaHR8P/aAAgBAgEBPwD5dffmEVZV/dbfxqr5V8z/AAQLVgeFatBH0A+i/wCEK90d/Sd/k3/A06Rv8g7KwgLWlypGyqPO/QCj8looaijvuUOR5VaaxzjQUPC5n/Vso+Dxt+o2mYMDPDUIWDwE10Tn6B5RiYfZPwYHf2qTg8TvpNKXhUzN27pzHMNOCHKvltF7nwmv6hJ53ya0uNBYvCS/ulUUEcQpg51anJbG7SnMbHGyWL6j/wCUD90Ed14UsDJRTgsjhBaLiTmFpo+l7tO6BsWPSBayX18MKMU2uY+6xsV+Q6mrGwo8cbefRYCnyaPTjFn/AIX9QldpAru2UGSXzfpwK0pufKdJ27lBlCXY7FA/b0ZWJHkDu8rJxH4xo+EQebxqbSgfXafSHaBrQJc7dDYct6tYWGcl1+yihbE3S30ZE3Sbt5UkjrPU8j7+K/CZ3AHf7/hNwA0amnuTDI51g/UpsIRNL2E7JzgwAkfjdQySNd8P/f7FRPEjQ4cyFLG2UU9Z2EcY2PpVryjundrlG7UL9GW/xGPZQMs2q+ykmazysGKTOkrw1QxthaGMVq1av8riAstJWEGxupzf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" alt="شعار الإدارة العامة للأدلة الجنائية">
+    <div class="titles">
+      <h1>سجل الحضور والانصراف</h1>
+      <p>الإدارة العامة للأدلة الجنائية - قسم البحث والتطوير</p>
+    </div>
+    <div class="clock">
+      <div class="t" id="hTime">--:--:--</div>
+      <div class="d" id="hDate">—</div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button id="tabHome" class="active">الرئيسية</button>
+    <button id="tabCal">الرزنامة السنوية</button>
+    <button id="tabDay">حضور اليوم</button>
+    <button id="tabEvents">الفعاليات</button>
+    <button id="tabDashboard">لوحة التحكم</button>
+    <button id="tabReport">تقرير الحضور</button>
+  </nav>
+
+  <!-- CONTROL PANEL -->
+  <section id="secDashboard">
+    <div class="cal-head">
+      <h2>لوحة التحكم</h2>
+    </div>
+    <div class="home-grid" id="dashboardStats"></div>
+
+    <div class="cal-head" style="margin-top:26px;">
+      <h2>إدارة سريعة</h2>
+    </div>
+    <div class="home-grid">
+      <div class="home-card">
+        <div class="ic">📆</div>
+        <h3>الرزنامة السنوية</h3>
+        <p>تصفح الحضور اليومي عبر أشهر السنة</p>
+        <button id="dashCal">فتح الرزنامة</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📋</div>
+        <h3>إدارة الفعاليات</h3>
+        <p>عرض، فتح، أو حذف الدورات الحالية</p>
+        <button id="dashEvents">عرض الفعاليات</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📊</div>
+        <h3>تصدير حضور الموظفين</h3>
+        <p>تصدير الأسبوع الحالي إلى Excel</p>
+        <button id="dashExportWeek">تصدير الأسبوع</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📁</div>
+        <h3>تصدير فعاليات الأسبوع</h3>
+        <p>كل الفعاليات التي لها سجلات هذا الأسبوع</p>
+        <button id="dashExportEvents">تصدير الفعاليات</button>
+      </div>
+    </div>
+
+    <div class="cal-head" style="margin-top:26px;">
+      <h2>نسخة احتياطية كاملة من بيانات هذا الجهاز</h2>
+    </div>
+    <div class="home-grid">
+      <div class="home-card">
+        <div class="ic">💾</div>
+        <h3>تصدير كل البيانات (JSON)</h3>
+        <p>ملف واحد يحتوي كل شيء: الحضور اليومي، الفعاليات، بصمات الوجوه والتواقيع. احفظه واحتفظ به لنقله لجهاز آخر لاحقاً.</p>
+        <button id="exportBackupBtn">تنزيل النسخة الاحتياطية</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📥</div>
+        <h3>استيراد نسخة احتياطية</h3>
+        <p>يستبدل بيانات هذا الجهاز بالكامل بمحتوى الملف الذي تختاره — استخدمه على الجهاز الجديد لنقل البيانات إليه.</p>
+        <input type="file" id="importBackupFile" accept="application/json" style="display:none;">
+        <button id="importBackupBtn">اختيار ملف واستيراد</button>
+      </div>
+    </div>
+
+    <div class="home-danger">
+      <h4>بدء أسبوع جديد</h4>
+      <p>يمسح هذا الإجراء سجلات الحضور والفعاليات المؤقتة فقط بعد التصدير. بصمات الوجوه والتواقيع المرجعية للموظفين لا تُحذف أبدًا.</p>
+      <button id="dashCleanupBtn">مسح سجلات الأسبوع</button>
+    </div>
+  </section>
+
+  <!-- ATTENDANCE REPORT (read-only, pick any date to review) -->
+  <section id="secReport">
+    <div class="cal-head">
+      <h2>تقرير الحضور والانصراف</h2>
+    </div>
+    <div class="date-nav">
+      <span style="font-size:12px;color:var(--text-1);">التاريخ:</span>
+      <input type="date" id="reportDateInput" lang="en">
+    </div>
+    <div id="reportContent"></div>
+  </section>
+
+  <!-- HOME -->
+  <section id="secHome" class="active">
+    <div class="home-grid">
+      <div class="home-card">
+        <div class="ic">🗓️</div>
+        <h3>حضور اليوم</h3>
+        <p>تسجيل حضور وانصراف الموظفين لليوم الحالي</p>
+        <button id="homeToday">فتح</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">➕</div>
+        <h3>إضافة فعالية</h3>
+        <p>دورة، محاضرة، ورشة أو اجتماع جديد</p>
+        <button id="homeNewEvent">إنشاء فعالية</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📋</div>
+        <h3>الفعاليات الحالية</h3>
+        <p>عرض وإدارة الفعاليات المسجّلة</p>
+        <button id="homeEvents">عرض الفعاليات</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📆</div>
+        <h3>الرزنامة السنوية</h3>
+        <p>تصفح الحضور اليومي عبر أشهر السنة</p>
+        <button id="homeCal">فتح الرزنامة</button>
+      </div>
+      <div class="home-card">
+        <div class="ic">📊</div>
+        <h3>تصدير Excel</h3>
+        <p>تصدير حضور الأسبوع الحالي للموظفين</p>
+        <button id="homeExport">تصدير الأسبوع</button>
+      </div>
+    </div>
+
+    <div class="home-danger">
+      <h4>بدء أسبوع جديد</h4>
+      <p>يمسح هذا الإجراء سجلات الحضور والفعاليات المؤقتة فقط بعد التصدير. بصمات الوجوه والتواقيع المرجعية للموظفين لا تُحذف أبدًا.</p>
+      <button id="cleanupBtn">مسح سجلات الأسبوع</button>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section id="secCal">
+    <div class="cal-head">
+      <h2>عرض السنة</h2>
+      <div class="yr-nav">
+        <button id="yrPrev">◀</button>
+        <span id="yrLabel" style="font-family:'Cairo',sans-serif;font-weight:700;color:var(--navy);"></span>
+        <button id="yrNext">▶</button>
+      </div>
+    </div>
+    <div class="months" id="monthsGrid"></div>
+  </section>
+
+  <!-- DAILY ROSTER -->
+  <section id="secDay">
+    <div class="day-head">
+      <button class="back" id="backToCal">→ الرجوع للرزنامة</button>
+      <h2 id="dayTitle">—</h2>
+      <button class="btn-sign" id="exportWeekBtn" style="background:var(--gold);">تصدير الأسبوع (Excel)</button>
+    </div>
+    <div class="roster" id="roster"></div>
+  </section>
+
+  <!-- EVENTS LIST -->
+  <section id="secEvents">
+    <div class="events-toolbar">
+      <button id="newEventBtn2">➕ إضافة فعالية</button>
+      <button class="gold" id="exportEventsWeekBtn">تصدير فعاليات الأسبوع (Excel)</button>
+    </div>
+    <div class="events-grid" id="eventsGrid"></div>
+  </section>
+
+  <!-- EVENT COVER -->
+  <section id="secEventCover">
+    <div class="event-cover">
+      <img id="coverLogo" src="" alt="شعار الإدارة العامة للأدلة الجنائية">
+      <h2 id="coverTitle">—</h2>
+      <p id="coverMeta">—</p>
+      <div class="event-time-badge" id="coverTimeBadge"></div>
+    </div>
+    <div class="panel" style="margin-top:14px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;">
+      <div style="font-size:12px;color:var(--text-1);margin-bottom:6px;">رابط صفحة المشارك لهذه الدورة (شاركه مع المتدربين)</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="coverShareLink" readonly style="flex:1;direction:ltr;text-align:left;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;background:var(--paper);">
+        <button id="coverCopyLink" style="background:var(--gold);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;">نسخ</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="back" id="backToEventsFromCover">→ الرجوع للفعاليات</button>
+      <button class="cover-enter-btn" id="enterCourseBtn">الدخول إلى الدورة (المسؤول)</button>
+    </div>
+  </section>
+
+  <!-- EVENT DETAIL -->
+  <section id="secEventDetail">
+    <div class="day-head">
+      <button class="back" id="backToEvents">→ الرجوع لغلاف الدورة</button>
+      <button class="btn-sign" id="exportSingleEventBtn" style="background:var(--gold);">تصدير الفعالية (Excel)</button>
+    </div>
+    <div class="event-header-block" id="eventHeaderBlock"></div>
+    <div class="date-nav" id="dateNav"></div>
+    <div class="participant-add-row">
+      <button id="addParticipantBtn" style="width:100%;">➕ إضافة مشارك جديد (بيانات كاملة + بصمة)</button>
+    </div>
+    <div class="roster" id="eventRoster"></div>
+  </section>
+
+  <footer class="f">النظام مخصص للاستخدام الداخلي — قسم البحث والتطوير</footer>
+</div>
+
+<!-- Face + signature modal (shared: daily & events) -->
+<div class="overlay" id="sigOverlay">
+  <div class="modal">
+    <h3 id="sigTitle">تسجيل الحضور ببصمة الوجه</h3>
+    <p class="sub" id="sigSub">اختر الوقت المسجل في جهاز البصمة، ثم وجّه الكاميرا نحو الوجه للتأكيد</p>
+    <div class="finger-time-row">
+      <label for="sigTimeInput">الوقت المسجل في جهاز البصمة</label>
+      <input type="time" id="sigTimeInput" lang="en">
+    </div>
+    <div class="face-status" id="faceStatus">جارٍ تشغيل الكاميرا...</div>
+    <div class="cam-wrap">
+      <canvas id="camPreview"></canvas>
+      <video id="camVideo" autoplay playsinline muted></video>
+      <div class="cam-frame"></div>
+    </div>
+    <div class="cam-rotate-row"><button id="camRotateBtn">↻ تدوير الكاميرا</button></div>
+    <canvas id="snapCanvas" style="display:none;"></canvas>
+    <div id="sigCanvasSection" style="display:none;">
+      <p class="enroll-note" id="enrollNote">لا يوجد وجه مسجّل مسبقًا لهذا الشخص — التقط الوجه ثم وقّع توقيعًا واحدًا لربطه بهذا الوجه نهائيًا. لن يُطلب التوقيع بعد اليوم.</p>
+      <p class="sub" style="margin:10px 0 6px;">توقيع لمرة واحدة لربطه بالوجه</p>
+      <div class="sig-canvas-wrap"><canvas id="sigCanvas"></canvas></div>
+      <button class="clear" id="sigClear" style="width:100%;margin-top:8px;padding:9px;border-radius:8px;">مسح التوقيع</button>
+    </div>
+    <div class="modal-actions">
+      <button class="cancel" id="sigCancel">إلغاء</button>
+      <button class="confirm" id="sigConfirm">التقاط وتأكيد</button>
+    </div>
+    <button class="reenroll-link" id="reenrollBtn">إعادة تسجيل الوجه لهذا الشخص</button>
+  </div>
+</div>
+
+<!-- Status modal (shared: daily & events) -->
+<div class="overlay" id="statusOverlay">
+  <div class="modal">
+    <h3>تحديد حالة الحضور</h3>
+    <p class="sub" id="statusSub">—</p>
+    <div class="status-options" id="statusOptions">
+      <button data-v="حاضر">حاضر</button>
+      <button data-v="متأخر">متأخر</button>
+      <button data-v="استئذان">استئذان</button>
+      <button data-v="طبية">طبية</button>
+      <button data-v="عرضي">عرضي</button>
+      <button data-v="غائب">غائب</button>
+      <button data-v="مهمة رسمية">مهمة رسمية</button>
+      <button data-v="أخرى">أخرى</button>
+    </div>
+    <div id="statusCustomWrap" style="display:none;">
+      <label class="field-label">وصف الحالة المخصصة</label>
+      <input type="text" id="statusCustomInput" placeholder="مثال: تدريب خارجي">
+    </div>
+    <label class="field-label">ملاحظات (اختياري)</label>
+    <textarea id="statusNoteInput" placeholder="مثال: استأذن الساعة 11:30 لمراجعة جهة رسمية"></textarea>
+    <div class="modal-actions">
+      <button class="cancel" id="statusClearBtn">مسح الحالة</button>
+      <button class="cancel" id="statusCancel">إلغاء</button>
+      <button class="confirm" id="statusSaveBtn">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Event form modal -->
+<div class="overlay" id="eventFormOverlay">
+  <div class="modal">
+    <h3>إضافة فعالية جديدة</h3>
+    <p class="sub">دورة، محاضرة، ورشة، اجتماع أو تدريب</p>
+    <label class="field-label">رمز الدورة (رابط المشاركين — فريد لكل دورة)</label>
+    <input type="text" id="evCode" placeholder="مثال: TR01" style="direction:ltr;text-align:left;">
+    <label class="field-label">عنوان الفعالية</label>
+    <input type="text" id="evTitle" placeholder="مثال: دورة الأمن السيبراني">
+    <label class="field-label">اسم المحاضر</label>
+    <input type="text" id="evLecturer" placeholder="مثال: أحمد محمد">
+    <label class="field-label">اسم المشرف (اختياري)</label>
+    <input type="text" id="evSupervisor" placeholder="مثال: م.عبدالعزيز">
+    <label class="field-label">التاريخ</label>
+    <input type="date" id="evDate" lang="en">
+    <label class="field-label">وقت البداية</label>
+    <input type="time" id="evStart" lang="en">
+    <label class="field-label">وقت النهاية</label>
+    <input type="time" id="evEnd" lang="en">
+    <label class="field-label">المكان (اختياري)</label>
+    <input type="text" id="evPlace" placeholder="مثال: قاعة الاجتماعات">
+    <label class="field-label">ملاحظات عامة (اختياري)</label>
+    <textarea id="evNotes"></textarea>
+    <div class="modal-actions">
+      <button class="cancel" id="evCancel">إلغاء</button>
+      <button class="confirm" id="evSave">حفظ الفعالية</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rich participant intake (admin only): personal data + straight into first-time biometric enrollment -->
+<div class="overlay" id="participantFormOverlay">
+  <div class="modal">
+    <h3>إضافة مشارك جديد</h3>
+    <p class="sub">تُحفظ هذه البيانات مرة واحدة، ثم تنتقل مباشرة لتسجيل بصمة الوجه والتوقيع لأول مرة</p>
+    <label class="field-label">الاسم الكامل</label>
+    <input type="text" id="pName" placeholder="مثال: محمد أحمد العتيبي">
+    <label class="field-label">الإدارة</label>
+    <input type="text" id="pAdmin" placeholder="مثال: الإدارة العامة للأدلة الجنائية">
+    <label class="field-label">القسم</label>
+    <input type="text" id="pDept" placeholder="مثال: قسم البحث والتطوير">
+    <label class="field-label">القطاع</label>
+    <input type="text" id="pSector" placeholder="مثال: قطاع الأمن الجنائي">
+    <label class="field-label">الرقم المدني</label>
+    <input type="text" id="pCivilId" placeholder="مثال: 289010112233" style="direction:ltr;text-align:left;">
+    <label class="field-label">رقم الهاتف</label>
+    <input type="text" id="pPhone" placeholder="مثال: 99887766" style="direction:ltr;text-align:left;">
+    <div class="modal-actions">
+      <button class="cancel" id="pCancel">إلغاء</button>
+      <button class="confirm" id="pSaveAndEnroll">حفظ والانتقال لتسجيل البصمة</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script>
+/* =========================================================
+   CONSTANTS & CORE STORAGE (daily roster — unchanged schema)
+   ========================================================= */
+const EMPLOYEES = ["استبرق","م.ايمان","حسين","خديجه","زراق","م.ساره","شيماء","م.عبدالعزيز","محمد","م.مهدي","نور"];
+const LOCK_MINUTES = 10;
+const STORE_KEY = 'rnd_attendance_v1';
+const FACES_KEY = 'rnd_faces_v1';
+const EVENTS_KEY = 'rnd_events_v1';
+const BLOCKING_STATUSES = ['طبية','عرضي','غائب','مهمة رسمية'];
+const dayNamesShort = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+
+/* All numbers, times and dates are rendered with Latin (English) digits:
+   24-hour HH:mm clock and dd/mm/yyyy dates. Never rely on the 'ar' locale
+   here — it emits Arabic-Indic digits on most browsers. */
+const pad2 = (n)=> String(n).padStart(2,'0');
+function fmtDateNum(d){ return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`; }
+/* On-screen dates follow the Kuwaiti right-to-left convention: written as
+   yyyy/mm/dd so that reading from the right gives day, month, then year.
+   Excel exports keep fmtDateNum (dd/mm/yyyy) because spreadsheets read LTR. */
+function fmtDateRtl(d){ return `${d.getFullYear()}/${pad2(d.getMonth()+1)}/${pad2(d.getDate())}`; }
+function fmtDateLong(d){ return `${dayNamesShort[d.getDay()]} ${fmtDateRtl(d)}`; }
+function fmtClock(d, withSeconds){
+  const t = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  return withSeconds ? `${t}:${pad2(d.getSeconds())}` : t;
+}
+
+/* =========================================================
+   SHARED SERVER STORAGE
+   All three datasets live in the shared database (/api/state,
+   /api/sync, /api/revision) so every device sees the same data.
+   Each save is diffed against the last known server copy and only
+   the changed rows are sent, so two devices editing different
+   people never overwrite one another.
+   ========================================================= */
+let store = {};
+let faceBank = {};
+let EVENTS = {};
+
+/* JSON copies of what the server is known to hold, used for diffing */
+let syncedStore = {}, syncedFaces = {}, syncedEvents = {};
+let serverRevision = null;
+let pendingOps = [];
+let flushTimer = null;
+let flushing = null;
+let lastSyncFailed = false;
+
+const clone = (o)=> JSON.parse(JSON.stringify(o || {}));
+const same = (a, b)=> JSON.stringify(a) === JSON.stringify(b);
+
+function showSyncError(msg){
+  let el = document.getElementById('syncErrorMsg');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'syncErrorMsg';
+    el.style.cssText = 'position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:9999;background:#b3261e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.25);max-width:90vw;text-align:center;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideSyncError(){
+  const el = document.getElementById('syncErrorMsg');
+  if(el) el.style.display = 'none';
+}
+
+function queueOps(ops){
+  if(!ops.length) return;
+  pendingOps.push(...ops);
+  clearTimeout(flushTimer);
+  /* batched so the several saves one user action triggers go out together */
+  flushTimer = setTimeout(flushOps, 50);
+}
+
+/* Sends queued edits in order. Calls made while a request is in flight
+   wait for it, so edits always reach the server in the order they happened. */
+function flushOps(){
+  clearTimeout(flushTimer);
+  if(flushing) return flushing.then(()=> pendingOps.length && !lastSyncFailed ? flushOps() : undefined);
+  if(!pendingOps.length) return Promise.resolve();
+  const ops = pendingOps.splice(0, 500);
+  flushing = (async ()=>{
+    try{
+      const res = await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ops })
+      });
+      const body = await res.json().catch(()=> ({}));
+      if(!res.ok) throw new Error(body.error || ('HTTP ' + res.status));
+      serverRevision = body.revision || serverRevision;
+      lastSyncFailed = false;
+      hideSyncError();
+    }catch(e){
+      console.error('sync failed', e);
+      /* keep the unsent edits and retry on the next save / poll */
+      pendingOps.unshift(...ops);
+      lastSyncFailed = true;
+      showSyncError('تعذر حفظ البيانات على الخادم — سيتم إعادة المحاولة تلقائيًا');
+    }
+  })().finally(()=>{ flushing = null; });
+  return flushing.then(()=> pendingOps.length && !lastSyncFailed ? flushOps() : undefined);
+}
+
+function diffRecords(prev, next, makeOp){
+  const ops = [];
+  Object.entries(next || {}).forEach(([day, people])=>{
+    Object.entries(people || {}).forEach(([name, rec])=>{
+      if(!same(rec, prev?.[day]?.[name])) ops.push(makeOp(day, name, rec));
+    });
+  });
+  return ops;
+}
+
+function saveStore(s){
+  const hadData = Object.keys(syncedStore).length > 0;
+  const ops = (Object.keys(s || {}).length === 0 && hadData)
+    ? [{ type:'cleanup' }]
+    : diffRecords(syncedStore, s, (day, employee, record)=> ({ type:'attendance.upsert', day, employee, record }));
+  syncedStore = clone(s);
+  queueOps(ops);
+}
+
+function saveFaces(f){
+  const ops = [];
+  Object.entries(f || {}).forEach(([employee, face])=>{
+    if(!same(face, syncedFaces[employee])) ops.push({ type:'face.upsert', employee, face });
+  });
+  Object.keys(syncedFaces).forEach(employee=>{
+    if(!(f || {})[employee]) ops.push({ type:'face.delete', employee });
+  });
+  syncedFaces = clone(f);
+  queueOps(ops);
+}
+
+function saveEvents(){
+  const ops = [];
+  Object.values(EVENTS).forEach(ev=>{
+    const prev = syncedEvents[ev.id];
+    const { attendanceByDate, ...meta } = ev;
+    const prevMeta = prev ? (({ attendanceByDate, ...m })=> m)(prev) : null;
+    if(!same(meta, prevMeta)) ops.push({ type:'event.upsert', event: meta });
+    ops.push(...diffRecords(prev?.attendanceByDate, attendanceByDate,
+      (day, participant, record)=> ({ type:'eventAttendance.upsert', eventId: ev.id, day, participant, record })));
+  });
+  Object.keys(syncedEvents).forEach(id=>{
+    if(!EVENTS[id]) ops.push({ type:'event.delete', id });
+  });
+  syncedEvents = clone(EVENTS);
+  queueOps(ops);
+}
+
+/* Replaces everything on the server in one step (backup import) */
+async function saveAllToServer(){
+  queueOps([{ type:'import', attendance: store, faces: faceBank, events: EVENTS }]);
+  syncedStore = clone(store); syncedFaces = clone(faceBank); syncedEvents = clone(EVENTS);
+  await flushOps();
+  if(pendingOps.length) throw new Error('sync failed');
+}
+
+function adoptServerState(data){
+  store = data.attendance || {};
+  faceBank = data.faces || {};
+  EVENTS = data.events || {};
+  syncedStore = clone(store); syncedFaces = clone(faceBank); syncedEvents = clone(EVENTS);
+  serverRevision = data.revision || null;
+}
+
+async function fetchServerState(){
+  const res = await fetch('/api/state', { cache:'no-store' });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+/* One-time move of data saved on this device before the shared server
+   existed: only used when the server is still completely empty. */
+function readLegacyLocal(){
+  const read = (k)=>{ try{ return JSON.parse(localStorage.getItem(k)) || {}; }catch(e){ return {}; } };
+  return { attendance: read(STORE_KEY), faces: read(FACES_KEY), events: read(EVENTS_KEY) };
+}
+const isEmptyState = (d)=> !Object.keys(d.attendance || {}).length && !Object.keys(d.faces || {}).length && !Object.keys(d.events || {}).length;
+
+function dayKey(y,m,d){ return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function getDayData(key){ if(!store[key]) store[key] = {}; return store[key]; }
+function getEmpData(key, name){
+  const dd = getDayData(key);
+  if(!dd[name]) dd[name] = { checkin:null, checkout:null, status:null };
+  return dd[name];
+}
+function minutesOf(hhmm){ if(!hhmm) return null; const [h,m] = hhmm.split(':').map(Number); return h*60+m; }
+function fmtTime(iso){ if(!iso) return null; return fmtClock(new Date(iso), false); }
+function isLocked(iso){ if(!iso) return false; return (Date.now() - new Date(iso).getTime()) > LOCK_MINUTES*60*1000; }
+
+/* =========================================================
+   ACTIVE TARGET — lets the SAME face/status modals write to
+   either the daily roster (store) or a specific date's record
+   inside a specific course/event (independent per date)
+   ========================================================= */
+let activeTarget = { type:'daily' };
+function getEventDayData(ev, dateKey){
+  if(!ev.attendanceByDate) ev.attendanceByDate = {};
+  if(!ev.attendanceByDate[dateKey]) ev.attendanceByDate[dateKey] = {};
+  return ev.attendanceByDate[dateKey];
+}
+function getActiveRecord(name){
+  if(activeTarget.type === 'daily') return getEmpData(currentKey, name);
+  const ev = EVENTS[activeTarget.eventId];
+  const dd = getEventDayData(ev, activeTarget.date);
+  if(!dd[name]) dd[name] = {};
+  return dd[name];
+}
+function saveActiveTarget(){
+  if(activeTarget.type === 'daily') saveStore(store);
+  else saveEvents();
+}
+function afterActiveSave(){
+  if(activeTarget.type === 'daily') renderRoster();
+  else if(isPublicMode) renderPublicCourseView();
+  else renderEventDetail(activeTarget.eventId);
+}
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+function tickClock(){
+  const now = new Date();
+  document.getElementById('hTime').textContent = fmtClock(now, true);
+  document.getElementById('hDate').textContent = fmtDateLong(now);
+}
+tickClock(); setInterval(tickClock, 1000);
+
+/* =========================================================
+   TABS
+   ========================================================= */
+const tabHome = document.getElementById('tabHome');
+const tabCal = document.getElementById('tabCal');
+const tabDay = document.getElementById('tabDay');
+const tabEvents = document.getElementById('tabEvents');
+const tabDashboard = document.getElementById('tabDashboard');
+const tabReport = document.getElementById('tabReport');
+const secHome = document.getElementById('secHome');
+const secCal = document.getElementById('secCal');
+const secDay = document.getElementById('secDay');
+const secEvents = document.getElementById('secEvents');
+const secEventDetail = document.getElementById('secEventDetail');
+const secDashboard = document.getElementById('secDashboard');
+const secReport = document.getElementById('secReport');
+const allTabs = [tabHome,tabCal,tabDay,tabEvents,tabDashboard,tabReport];
+const secEventCover = document.getElementById('secEventCover');
+const allSecs = [secHome,secCal,secDay,secEvents,secEventCover,secEventDetail,secDashboard,secReport];
+
+function activate(tab, sec){
+  allTabs.forEach(t=>t.classList.toggle('active', t===tab));
+  allSecs.forEach(s=>s.classList.toggle('active', s===sec));
+}
+function activateNoTab(sec){
+  allTabs.forEach(t=>t.classList.remove('active'));
+  allSecs.forEach(s=>s.classList.toggle('active', s===sec));
+}
+function showHome(){ activate(tabHome, secHome); }
+function showCal(){ activate(tabCal, secCal); renderMonths(); }
+function showDayView(y,m,d){ activate(tabDay, secDay); openDay(y,m,d); }
+function showEventsList(){ activate(tabEvents, secEvents); renderEventsList(); }
+function showDashboard(){ activate(tabDashboard, secDashboard); renderDashboard(); }
+function showReport(){ activate(tabReport, secReport); renderReportForDate(document.getElementById('reportDateInput').value || new Date().toISOString().slice(0,10)); }
+tabDashboard.addEventListener('click', showDashboard);
+tabReport.addEventListener('click', showReport);
+
+function showEventCover(id){
+  currentEventId = id;
+  const ev = EVENTS[id];
+  activateNoTab(secEventCover);
+  document.getElementById('coverLogo').src = document.getElementById('mainLogoImg').src;
+  document.getElementById('coverTitle').textContent = ev.title;
+  document.getElementById('coverMeta').innerHTML = `المحاضر: ${ev.lecturer || '—'} <button onclick="renameLecturerPrompt('${ev.id}')" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:6px;padding:1px 8px;font-size:11px;margin-right:6px;cursor:pointer;">✎</button>`;
+  document.getElementById('coverTimeBadge').innerHTML = `
+    <div><span class="lbl">تبدأ من</span>${ev.startTime || '—'}</div>
+    <div>→</div>
+    <div><span class="lbl">تنتهي في</span>${ev.endTime || '—'}</div>
+  `;
+  const shareUrl = ev.code ? `${location.origin}${location.pathname}?course=${encodeURIComponent(ev.code)}` : '—';
+  document.getElementById('coverShareLink').value = shareUrl;
+}
+document.getElementById('coverCopyLink').addEventListener('click', ()=>{
+  const input = document.getElementById('coverShareLink');
+  input.select();
+  navigator.clipboard?.writeText(input.value).then(()=>{
+    const btn = document.getElementById('coverCopyLink');
+    const old = btn.textContent; btn.textContent = 'تم النسخ ✓';
+    setTimeout(()=> btn.textContent = old, 1500);
+  }).catch(()=> document.execCommand('copy'));
+});
+function showEventDetail(id){
+  currentEventId = id;
+  activateNoTab(secEventDetail);
+  renderEventDetail(id);
+}
+
+tabHome.addEventListener('click', showHome);
+tabCal.addEventListener('click', showCal);
+tabDay.addEventListener('click', () => { const t=new Date(); showDayView(t.getFullYear(), t.getMonth(), t.getDate()); });
+tabEvents.addEventListener('click', showEventsList);
+document.getElementById('backToCal').addEventListener('click', showCal);
+document.getElementById('backToEvents').addEventListener('click', ()=> showEventCover(currentEventId));
+document.getElementById('backToEventsFromCover').addEventListener('click', showEventsList);
+document.getElementById('enterCourseBtn').addEventListener('click', ()=> showEventDetail(currentEventId));
+
+document.getElementById('homeToday').addEventListener('click', ()=> tabDay.click());
+document.getElementById('homeCal').addEventListener('click', showCal);
+document.getElementById('homeEvents').addEventListener('click', showEventsList);
+document.getElementById('homeNewEvent').addEventListener('click', openEventForm);
+document.getElementById('newEventBtn2').addEventListener('click', openEventForm);
+document.getElementById('homeExport').addEventListener('click', ()=>{
+  if(!currentDate){ const t=new Date(); currentDate = t; }
+  exportWeekExcel();
+});
+
+/* =========================================================
+   CLEANUP (item 14): clears attendance/event records only,
+   never touches biometric face bank
+   ========================================================= */
+function performCleanup(){
+  if(confirm('هل أنت متأكد؟ تأكد من حفظ ملف Excel قبل حذف بيانات الأسبوع.')){
+    store = {}; saveStore(store);
+    EVENTS = {}; saveEvents();
+    alert('تم مسح سجلات الحضور والفعاليات المؤقتة. بصمات الوجوه والتواقيع المرجعية محفوظة كما هي.');
+    renderMonths();
+  }
+}
+document.getElementById('cleanupBtn').addEventListener('click', performCleanup);
+
+/* =========================================================
+   CONTROL PANEL (dashboard): live stats + quick management,
+   reuses existing functions only — no new data logic
+   ========================================================= */
+document.getElementById('dashCal').addEventListener('click', showCal);
+document.getElementById('dashEvents').addEventListener('click', showEventsList);
+document.getElementById('dashExportWeek').addEventListener('click', ()=>{
+  if(!currentDate){ currentDate = new Date(); }
+  exportWeekExcel();
+});
+document.getElementById('dashExportEvents').addEventListener('click', exportAllEventsWeekExcel);
+document.getElementById('dashCleanupBtn').addEventListener('click', performCleanup);
+
+/* =========================================================
+   FULL DATA BACKUP — export everything on this device to a
+   single JSON file, and import it back on any other device.
+   This is a manual migration path (no server involved).
+   ========================================================= */
+document.getElementById('exportBackupBtn').addEventListener('click', ()=>{
+  const backup = {
+    exportedAt: new Date().toISOString(),
+    source: 'rnd-attendance',
+    attendance: store,
+    faces: faceBank,
+    events: EVENTS
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `نسخة-احتياطية-الحضور-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBackupBtn').addEventListener('click', ()=>{
+  document.getElementById('importBackupFile').click();
+});
+document.getElementById('importBackupFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    let data;
+    try{ data = JSON.parse(evt.target.result); }
+    catch(err){ alert('هذا الملف ليس نسخة احتياطية صالحة (JSON غير سليم)'); return; }
+    if(!data.attendance && !data.faces && !data.events){
+      alert('هذا الملف لا يحتوي على بيانات النظام المتوقعة'); return;
+    }
+    if(!confirm('سيتم استبدال كل بيانات هذا الجهاز (الحضور، الفعاليات، بصمات الوجوه) بمحتوى هذا الملف. هل أنت متأكد؟')) return;
+    store = data.attendance || {};
+    faceBank = data.faces || {};
+    EVENTS = data.events || {};
+    saveAllToServer().then(()=>{
+      alert('تم استيراد النسخة الاحتياطية بنجاح. سيُعاد تحميل الصفحة الآن.');
+      location.reload();
+    }).catch(()=>{});
+  };
+  reader.readAsText(file);
+});
+
+function renderDashboard(){
+  const wrap = document.getElementById('dashboardStats');
+  const todayKey = dayKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const todayData = store[todayKey] || {};
+  const presentToday = Object.values(todayData).filter(v=>v.checkin_officialTime).length;
+
+  let eventRecordsTotal = 0;
+  Object.values(EVENTS).forEach(ev=>{
+    Object.values(ev.attendanceByDate || {}).forEach(dayObj=>{
+      eventRecordsTotal += Object.values(dayObj).filter(v=>v.checkin_officialTime||v.checkout_officialTime||v.status).length;
+    });
+  });
+
+  const stats = [
+    { ic:'👥', title:'عدد الموظفين', val: EMPLOYEES.length },
+    { ic:'✅', title:'حضور اليوم', val: `${presentToday} / ${EMPLOYEES.length}` },
+    { ic:'📋', title:'الفعاليات الحالية', val: Object.keys(EVENTS).length },
+    { ic:'🧾', title:'إجمالي سجلات حضور الفعاليات', val: eventRecordsTotal },
+    { ic:'🪪', title:'بصمات الوجوه المسجَّلة', val: Object.keys(faceBank).length },
+  ];
+  wrap.innerHTML = stats.map(s=>`
+    <div class="home-card">
+      <div class="ic">${s.ic}</div>
+      <h3>${s.title}</h3>
+      <p style="font-family:'Cairo',sans-serif;font-weight:900;font-size:26px;color:var(--navy);margin-bottom:0;">${s.val}</p>
+    </div>
+  `).join('');
+}
+
+/* =========================================================
+   ATTENDANCE REPORT (read-only review by date — no editing here)
+   ========================================================= */
+document.getElementById('reportDateInput').addEventListener('change', (e)=>{
+  renderReportForDate(e.target.value);
+});
+function statusPill(status){
+  if(!status) return '<span class="pill ok">حاضر</span>';
+  if(status==='غائب') return `<span class="pill warn">${status}</span>`;
+  if(['طبية','عرضي','مهمة رسمية'].includes(status)) return `<span class="pill leave">${status}</span>`;
+  return `<span class="pill neutral">${status}</span>`;
+}
+function renderReportForDate(dateStr){
+  document.getElementById('reportDateInput').value = dateStr;
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const key = dayKey(y, m-1, d);
+  const content = document.getElementById('reportContent');
+  let html = '';
+
+  /* daily roster section */
+  const dayData = store[key] || {};
+  html += `<div class="report-section"><h3>حضور الموظفين اليومي</h3><table class="report-table">
+    <thead><tr><th>الاسم</th><th>الحضور</th><th>الانصراف</th><th>الحالة</th></tr></thead><tbody>`;
+  EMPLOYEES.forEach(name=>{
+    const r = dayData[name] || {};
+    html += `<tr><td>${name}</td><td>${r.checkin_officialTime || '—'}</td><td>${r.checkout_officialTime || '—'}</td><td class="status-pill">${statusPill(r.status)}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  /* events with a record on this date */
+  const eventsWithData = Object.values(EVENTS).filter(ev => ev.attendanceByDate && ev.attendanceByDate[key]);
+  if(eventsWithData.length === 0){
+    html += `<div class="empty-hint">لا توجد فعاليات لها سجل حضور في هذا التاريخ</div>`;
+  } else {
+    eventsWithData.forEach(ev=>{
+      const dd = ev.attendanceByDate[key];
+      html += `<div class="report-section"><h3>${ev.title}</h3><table class="report-table">
+        <thead><tr><th>المشارك</th><th>الحضور</th><th>الانصراف</th><th>الحالة</th></tr></thead><tbody>`;
+      ev.participants.forEach(name=>{
+        const r = dd[name] || {};
+        if(!r.checkin_officialTime && !r.checkout_officialTime && !r.status) return;
+        html += `<tr><td>${name}</td><td>${r.checkin_officialTime || '—'}</td><td>${r.checkout_officialTime || '—'}</td><td class="status-pill">${statusPill(r.status)}</td></tr>`;
+      });
+      html += `</tbody></table></div>`;
+    });
+  }
+
+  content.innerHTML = html;
+}
+document.getElementById('reportDateInput').value = new Date().toISOString().slice(0,10);
+
+
+/* =========================================================
+   CALENDAR
+   ========================================================= */
+let calYear = new Date().getFullYear();
+const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const weekLabels = ["أحد","اثن","ثلا","أرب","خمي","جمع","سبت"];
+
+function renderMonths(){
+  document.getElementById('yrLabel').textContent = calYear;
+  const grid = document.getElementById('monthsGrid');
+  grid.innerHTML = '';
+  const today = new Date();
+  for(let m=0; m<12; m++){
+    const card = document.createElement('div'); card.className = 'month-card';
+    const h3 = document.createElement('h3'); h3.textContent = monthNames[m]; card.appendChild(h3);
+    const wk = document.createElement('div'); wk.className='wk';
+    weekLabels.forEach(w=>{ const s=document.createElement('span'); s.textContent=w; wk.appendChild(s); });
+    card.appendChild(wk);
+    const daysWrap = document.createElement('div'); daysWrap.className='days';
+    const firstDow = new Date(calYear, m, 1).getDay();
+    const numDays = new Date(calYear, m+1, 0).getDate();
+    for(let i=0;i<firstDow;i++){ const e=document.createElement('div'); e.className='day empty'; daysWrap.appendChild(e); }
+    for(let d=1; d<=numDays; d++){
+      const el = document.createElement('div');
+      const key = dayKey(calYear,m,d);
+      const hasData = !!store[key] && Object.values(store[key]).some(v=>v.checkin_officialTime||v.checkout_officialTime||v.status);
+      let cls = 'day clickable';
+      if(today.getFullYear()===calYear && today.getMonth()===m && today.getDate()===d) cls += ' today';
+      if(hasData) cls += ' has-data';
+      el.className = cls; el.textContent = d;
+      el.addEventListener('click', ()=> showDayView(calYear, m, d));
+      daysWrap.appendChild(el);
+    }
+    card.appendChild(daysWrap);
+    grid.appendChild(card);
+  }
+}
+document.getElementById('yrPrev').addEventListener('click', ()=>{ calYear--; renderMonths(); });
+document.getElementById('yrNext').addEventListener('click', ()=>{ calYear++; renderMonths(); });
+
+/* =========================================================
+   DAILY ROSTER
+   ========================================================= */
+let currentKey = null;
+let currentDate = null;
+
+function openDay(y,m,d){
+  currentKey = dayKey(y,m,d);
+  currentDate = new Date(y,m,d);
+  document.getElementById('dayTitle').textContent = fmtDateLong(currentDate);
+  activeTarget = { type:'daily' };
+  renderRoster();
+}
+function renderRoster(){
+  const wrap = document.getElementById('roster');
+  wrap.innerHTML = '';
+  activeTarget = { type:'daily' };
+  EMPLOYEES.forEach(name=>{
+    const emp = getEmpData(currentKey, name);
+    wrap.appendChild(buildParticipantRow(name, emp, null));
+  });
+}
+
+/* =========================================================
+   SHARED ROW BUILDER (used by daily roster AND events)
+   eventObj = null for daily roster, or the event object for delay calc
+   ========================================================= */
+/* Participants used to be plain name strings (the string doubled as both
+   the display name AND the record/faceBank key). New participants are
+   rich objects { id, name, administration, department, sector, phone }
+   where id = Civil ID and is what stays stable in records/faceBank —
+   renaming the display name no longer needs to migrate anything.
+   Legacy string participants are normalized on the fly (id = name),
+   so nothing already saved breaks. */
+function normParticipant(p){
+  if(typeof p === 'string') return { id:p, name:p, administration:'', department:'', sector:'', phone:'' };
+  return p;
+}
+
+function renameParticipant(eventObj, participant){
+  const input = prompt(`تعديل اسم "${participant.name}" إلى:`, participant.name);
+  if(input === null) return;
+  const trimmed = input.trim();
+  if(!trimmed || trimmed === participant.name) return;
+  eventObj.participants = eventObj.participants.map(normParticipant).map(p=>
+    p.id === participant.id ? { ...p, name: trimmed } : p
+  );
+  saveEvents(); /* participants array is part of event meta, so this alone re-syncs the new name */
+  renderEventDetail(eventObj.id);
+}
+
+/* touch-friendly drag-to-reorder for course participants (pointer events
+   work for both mouse and touchscreen) — admin only */
+let dragState = null;
+function attachDragHandle(handle, row, id){
+  handle.addEventListener('pointerdown', (e)=>{
+    e.preventDefault();
+    const rosterEl = document.getElementById('eventRoster');
+    const rows = Array.from(rosterEl.querySelectorAll('.row'));
+    dragState = { id, startY: e.clientY, row, rows };
+    row.classList.add('dragging');
+    try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+    document.addEventListener('pointermove', onDragMove);
+    document.addEventListener('pointerup', onDragEnd, {once:true});
+  });
+}
+function onDragMove(e){
+  if(!dragState) return;
+  const dy = e.clientY - dragState.startY;
+  dragState.row.style.transform = `translateY(${dy}px)`;
+}
+function onDragEnd(e){
+  if(!dragState) return;
+  const { id, row, rows } = dragState;
+  const eventObj = EVENTS[currentEventId];
+  row.style.transform = ''; row.classList.remove('dragging');
+  const finalY = e.clientY;
+  const others = rows.filter(r=>r!==row);
+  let insertBeforeIdx = others.length;
+  for(let i=0;i<others.length;i++){
+    const rect = others[i].getBoundingClientRect();
+    const mid = rect.top + rect.height/2;
+    if(finalY < mid){ insertBeforeIdx = i; break; }
+  }
+  const byId = {}; eventObj.participants.map(normParticipant).forEach(p=> byId[p.id]=p);
+  const newOrderIds = others.map(r=>r.dataset.pid);
+  newOrderIds.splice(insertBeforeIdx, 0, id);
+  eventObj.participants = newOrderIds.map(pid=>byId[pid]);
+  saveEvents();
+  document.removeEventListener('pointermove', onDragMove);
+  dragState = null;
+  renderEventDetail(currentEventId);
+}
+
+/* opts.restricted = true → public course link view (no drag/edit/delete/status,
+   no date navigation, just the two attendance buttons) */
+function buildParticipantRow(participant, record, eventObj, opts){
+  const p = normParticipant(participant);
+  const restricted = opts && opts.restricted;
+  const row = document.createElement('div');
+  row.className = 'row';
+
+  const nameWrap = document.createElement('div');
+  nameWrap.className = 'name-wrap';
+
+  if(eventObj && !restricted){
+    row.dataset.pid = p.id;
+    const handle = document.createElement('span');
+    handle.className = 'drag-handle';
+    handle.textContent = '⋮⋮';
+    handle.title = 'اسحب لإعادة الترتيب';
+    nameWrap.appendChild(handle);
+    attachDragHandle(handle, row, p.id);
+  }
+
+  const nameEl = document.createElement('div'); nameEl.className = 'name'; nameEl.textContent = p.name;
+  nameWrap.appendChild(nameEl);
+  if(eventObj && !restricted){
+    const editBtn = document.createElement('button');
+    editBtn.className = 'mini-btn'; editBtn.textContent = '✎';
+    editBtn.title = 'تعديل الاسم';
+    editBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); renameParticipant(eventObj, p); });
+    nameWrap.appendChild(editBtn);
+
+    const del = document.createElement('button');
+    del.className = 'mini-btn'; del.textContent = '✕';
+    del.title = 'إزالة المشارك';
+    del.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      if(confirm(`إزالة ${p.name} من قائمة المشاركين؟`)){
+        eventObj.participants = eventObj.participants.map(normParticipant).filter(x=>x.id!==p.id);
+        saveEvents();
+        renderEventDetail(eventObj.id);
+      }
+    });
+    nameWrap.appendChild(del);
+  }
+  const nameCell = document.createElement('div'); nameCell.appendChild(nameWrap);
+  row.appendChild(nameCell);
+
+  row.appendChild(buildAttendCell('حضور','checkin', p.id, record, eventObj, p.name));
+  row.appendChild(buildAttendCell('انصراف','checkout', p.id, record, eventObj, p.name));
+
+  if(!restricted){
+    const statusBtn = document.createElement('button');
+    statusBtn.className = 'status-badge' + (record.status ? ' set' : '');
+    statusBtn.textContent = record.status ? record.status : 'تحديد حالة';
+    statusBtn.addEventListener('click', ()=> openStatusModal(p.id, eventObj ? {type:'event', eventId:eventObj.id, date: currentEventDateKey} : {type:'daily'}, p.name));
+    row.appendChild(statusBtn);
+  }
+
+  return row;
+}
+
+function buildAttendCell(label, field, id, record, eventObj, displayName){
+  const cell = document.createElement('div'); cell.className = 'cell';
+  const lab = document.createElement('div'); lab.className='label'; lab.textContent = label;
+  cell.appendChild(lab);
+
+  const officialTime = record[field+'_officialTime'];
+  const confirmedAt = record[field+'_confirmedAt'];
+
+  if(officialTime){
+    const val = document.createElement('div'); val.className='val'; val.textContent = officialTime;
+    cell.appendChild(val);
+
+    if(eventObj){
+      const delayEl = document.createElement('div'); delayEl.className = 'delay';
+      if(field==='checkin' && eventObj.startTime){
+        const d = minutesOf(officialTime) - minutesOf(eventObj.startTime);
+        if(d > 0){ delayEl.textContent = `متأخر ${d} د`; delayEl.classList.add('late'); }
+        else if(d < 0){ delayEl.textContent = `قبل الموعد ${-d} د`; delayEl.classList.add('early-in'); }
+        else { delayEl.textContent = 'في الموعد'; delayEl.classList.add('ontime'); }
+      } else if(field==='checkout' && eventObj.endTime){
+        const d = minutesOf(eventObj.endTime) - minutesOf(officialTime);
+        if(d > 0){ delayEl.textContent = `مبكر ${d} د`; delayEl.classList.add('late'); }
+        else if(d < 0){ delayEl.textContent = `بعد النهاية ${-d} د`; delayEl.classList.add('early-in'); }
+        else { delayEl.textContent = 'في الموعد'; delayEl.classList.add('ontime'); }
+      }
+      cell.appendChild(delayEl);
+    }
+
+    const btn = document.createElement('button');
+    const locked = isLocked(confirmedAt);
+    btn.className = 'btn-sign ' + (locked ? 'locked' : 'done');
+    btn.textContent = locked ? 'مقفل' : 'تم — تعديل';
+    btn.disabled = locked;
+    if(!locked) btn.addEventListener('click', ()=> openSigModal(id, field, label, eventObj ? {type:'event', eventId:eventObj.id, date: currentEventDateKey} : {type:'daily'}, displayName));
+    cell.appendChild(btn);
+  } else {
+    const disabledByStatus = !!record.status && BLOCKING_STATUSES.includes(record.status);
+    const btn = document.createElement('button');
+    btn.className = 'btn-sign';
+    btn.textContent = disabledByStatus ? 'الحالة: '+record.status : 'تسجيل '+label;
+    btn.disabled = disabledByStatus;
+    if(!disabledByStatus) btn.addEventListener('click', ()=> openSigModal(id, field, label, eventObj ? {type:'event', eventId:eventObj.id, date: currentEventDateKey} : {type:'daily'}, displayName));
+    cell.appendChild(btn);
+  }
+  return cell;
+}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+function suggestNextCourseCode(){
+  const used = new Set(Object.values(EVENTS).map(e=> (e.code||'').toUpperCase()));
+  for(let n=1;n<=999;n++){
+    const c = 'TR' + String(n).padStart(2,'0');
+    if(!used.has(c)) return c;
+  }
+  return 'TR' + Date.now().toString(36).toUpperCase();
+}
+function openEventForm(){
+  document.getElementById('evCode').value = suggestNextCourseCode();
+  document.getElementById('evTitle').value = '';
+  document.getElementById('evLecturer').value = '';
+  document.getElementById('evSupervisor').value = '';
+  document.getElementById('evDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('evStart').value = '';
+  document.getElementById('evEnd').value = '';
+  document.getElementById('evPlace').value = '';
+  document.getElementById('evNotes').value = '';
+  document.getElementById('eventFormOverlay').classList.add('show');
+}
+document.getElementById('evCancel').addEventListener('click', ()=> document.getElementById('eventFormOverlay').classList.remove('show'));
+document.getElementById('evSave').addEventListener('click', ()=>{
+  const code = document.getElementById('evCode').value.trim().toUpperCase();
+  const title = document.getElementById('evTitle').value.trim();
+  const lecturer = document.getElementById('evLecturer').value.trim();
+  const supervisor = document.getElementById('evSupervisor').value.trim();
+  const date = document.getElementById('evDate').value;
+  const startTime = document.getElementById('evStart').value;
+  const endTime = document.getElementById('evEnd').value;
+  const place = document.getElementById('evPlace').value.trim();
+  const notes = document.getElementById('evNotes').value.trim();
+  if(!title || !date || !startTime || !endTime){
+    alert('يرجى تعبئة عنوان الفعالية والتاريخ ووقتي البداية والنهاية على الأقل');
+    return;
+  }
+  if(!code){ alert('رمز الدورة مطلوب — يُستخدم في رابط المشاركين'); return; }
+  if(Object.values(EVENTS).some(e=> (e.code||'').toUpperCase() === code)){
+    alert('رمز الدورة هذا مستخدم بالفعل — اختر رمزاً مختلفاً'); return;
+  }
+  const id = 'ev_' + Date.now().toString(36);
+  EVENTS[id] = { id, code, title, lecturer, supervisor, date, startTime, endTime, place, notes, participants: [], attendanceByDate: {} };
+  saveEvents();
+  document.getElementById('eventFormOverlay').classList.remove('show');
+  showEventCover(id);
+});
+
+function renderEventsList(){
+  const grid = document.getElementById('eventsGrid');
+  grid.innerHTML = '';
+  const ids = Object.keys(EVENTS).sort((a,b)=> (EVENTS[b].date||'').localeCompare(EVENTS[a].date||''));
+  if(ids.length === 0){
+    grid.innerHTML = '<div class="empty-hint">لا توجد فعاليات مسجّلة بعد — اضغط "إضافة فعالية" للبدء</div>';
+    return;
+  }
+  ids.forEach(id=>{
+    const ev = EVENTS[id];
+    const card = document.createElement('div'); card.className = 'event-card';
+    const h3 = document.createElement('h3'); h3.textContent = ev.title; card.appendChild(h3);
+    if(ev.code){ const codeEl=document.createElement('div'); codeEl.className='meta'; codeEl.style.cssText='direction:ltr;text-align:right;font-family:monospace;color:var(--gold);'; codeEl.textContent = ev.code; card.appendChild(codeEl); }
+    const m1 = document.createElement('div'); m1.className='meta'; m1.textContent = `المحاضر: ${ev.lecturer || '—'}`; card.appendChild(m1);
+    const m2 = document.createElement('div'); m2.className='meta'; m2.textContent = `${ev.date || '—'} | ${ev.startTime || '—'} - ${ev.endTime || '—'}`; card.appendChild(m2);
+    const m3 = document.createElement('div'); m3.className='meta'; m3.textContent = `عدد المشاركين: ${ev.participants.length}`; card.appendChild(m3);
+    const actions = document.createElement('div'); actions.className='actions';
+    const openBtn = document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='فتح';
+    openBtn.addEventListener('click', ()=> showEventCover(id));
+    const delBtn = document.createElement('button'); delBtn.className='del-btn'; delBtn.textContent='حذف';
+    delBtn.addEventListener('click', ()=>{
+      if(confirm(`حذف فعالية "${ev.title}"؟ يفضّل تصديرها إلى Excel أولًا.`)){
+        delete EVENTS[id]; saveEvents(); renderEventsList();
+      }
+    });
+    actions.appendChild(openBtn); actions.appendChild(delBtn);
+    card.appendChild(actions);
+    grid.appendChild(card);
+  });
+}
+
+let currentEventId = null;
+let currentEventDateKey = null;
+
+function renameLecturerPrompt(eventId){
+  const ev = EVENTS[eventId];
+  const input = prompt('اسم المحاضر الجديد:', ev.lecturer || '');
+  if(input === null) return;
+  ev.lecturer = input.trim();
+  saveEvents();
+  if(secEventCover.classList.contains('active')) showEventCover(eventId);
+  else if(secEventDetail.classList.contains('active')) renderEventDetail(eventId);
+}
+
+function renderDateNav(ev){
+  const wrap = document.getElementById('dateNav');
+  wrap.innerHTML = '';
+
+  const label = document.createElement('span');
+  label.style.fontSize = '12px'; label.style.color = 'var(--text-1)';
+  label.textContent = 'اليوم المعروض:';
+  wrap.appendChild(label);
+
+  const input = document.createElement('input');
+  input.type = 'date';
+  input.lang = 'en';
+  input.value = currentEventDateKey;
+  input.addEventListener('change', ()=>{
+    if(!input.value) return;
+    currentEventDateKey = input.value;
+    activeTarget = { type:'event', eventId: currentEventId, date: currentEventDateKey };
+    renderEventDetail(currentEventId);
+  });
+  wrap.appendChild(input);
+
+  const todayBtn = document.createElement('button');
+  todayBtn.className = 'today-btn';
+  todayBtn.textContent = 'اليوم';
+  todayBtn.addEventListener('click', ()=>{
+    currentEventDateKey = new Date().toISOString().slice(0,10);
+    activeTarget = { type:'event', eventId: currentEventId, date: currentEventDateKey };
+    renderEventDetail(currentEventId);
+  });
+  wrap.appendChild(todayBtn);
+
+  const savedDates = Object.keys(ev.attendanceByDate || {})
+    .filter(k=> Object.values(ev.attendanceByDate[k]).some(v=>v.checkin_officialTime||v.checkout_officialTime||v.status))
+    .sort();
+  savedDates.forEach(dk=>{
+    const chip = document.createElement('span');
+    chip.className = 'date-chip' + (dk===currentEventDateKey ? ' active' : '');
+    chip.textContent = dk;
+    chip.addEventListener('click', ()=>{
+      currentEventDateKey = dk;
+      activeTarget = { type:'event', eventId: currentEventId, date: currentEventDateKey };
+      renderEventDetail(currentEventId);
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+function renderEventDetail(id){
+  currentEventId = id;
+  if(!currentEventDateKey) currentEventDateKey = new Date().toISOString().slice(0,10);
+  activeTarget = { type:'event', eventId:id, date: currentEventDateKey };
+  const ev = EVENTS[id];
+  const block = document.getElementById('eventHeaderBlock');
+  block.innerHTML = `
+    <h2>${ev.title}</h2>
+    <div class="lect">المحاضر: ${ev.lecturer || '—'} <button onclick="renameLecturerPrompt('${ev.id}')" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:6px;padding:1px 8px;font-size:11px;margin-right:6px;cursor:pointer;">✎</button></div>
+    <div class="event-time-badge">
+      <div><span class="lbl">تبدأ من</span>${ev.startTime || '—'}</div>
+      <div>→</div>
+      <div><span class="lbl">تنتهي في</span>${ev.endTime || '—'}</div>
+    </div>
+    <div class="meta-row">
+      ${ev.place ? `<span>📍 ${ev.place}</span>` : ''}
+      ${ev.notes ? `<span>📝 ${ev.notes}</span>` : ''}
+    </div>
+  `;
+  renderDateNav(ev);
+
+  const roster = document.getElementById('eventRoster');
+  roster.innerHTML = '';
+  if(ev.participants.length === 0){
+    roster.innerHTML = '<div class="empty-hint">أضف مشاركين للفعالية باستخدام الحقل أعلاه</div>';
+    return;
+  }
+  const dayData = getEventDayData(ev, currentEventDateKey);
+  ev.participants.map(normParticipant).forEach(p=>{
+    if(!dayData[p.id]) dayData[p.id] = {};
+    roster.appendChild(buildParticipantRow(p, dayData[p.id], ev));
+  });
+}
+
+/* Rich participant intake — name, administration, department, sector,
+   Civil ID (the stable key used everywhere), phone — required before
+   the person is added, then straight into face+signature enrollment
+   for that same person. */
+document.getElementById('addParticipantBtn').addEventListener('click', openParticipantForm);
+function openParticipantForm(){
+  ['pName','pAdmin','pDept','pSector','pCivilId','pPhone'].forEach(id=> document.getElementById(id).value = '');
+  document.getElementById('participantFormOverlay').classList.add('show');
+}
+document.getElementById('pCancel').addEventListener('click', ()=> document.getElementById('participantFormOverlay').classList.remove('show'));
+document.getElementById('pSaveAndEnroll').addEventListener('click', ()=>{
+  const name = document.getElementById('pName').value.trim();
+  const administration = document.getElementById('pAdmin').value.trim();
+  const department = document.getElementById('pDept').value.trim();
+  const sector = document.getElementById('pSector').value.trim();
+  const civilId = document.getElementById('pCivilId').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
+  if(!name || !civilId){ alert('الاسم والرقم المدني مطلوبان على الأقل'); return; }
+  const ev = EVENTS[currentEventId];
+  const existing = ev.participants.map(normParticipant);
+  if(existing.some(p=>p.id===civilId)){ alert('هذا الرقم المدني مضاف بالفعل في قائمة المشاركين'); return; }
+  const participant = { id:civilId, name, administration, department, sector, phone };
+  ev.participants.push(participant);
+  saveEvents();
+  document.getElementById('participantFormOverlay').classList.remove('show');
+  renderEventDetail(currentEventId);
+  /* straight into first-time face + signature enrollment for this new person */
+  openSigModal(participant.id, 'checkin', 'حضور', {type:'event', eventId:ev.id, date: currentEventDateKey}, participant.name);
+});
+
+/* =========================================================
+   FACE RECOGNITION + ONE-TIME SIGNATURE MODAL
+   (shared by daily roster and events via activeTarget)
+   ========================================================= */
+/* Try multiple CDN sources in order — some networks (especially secured
+   government/institutional networks) block raw.githubusercontent.com
+   specifically while allowing general-purpose CDNs like jsDelivr. */
+const MODEL_URL_CANDIDATES = [
+  'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights',
+  'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights',
+  'https://justadudewhohacks.github.io/face-api.js/weights'
+];
+const MATCH_THRESHOLD = 0.5;
+let modelsReady = false;
+let modelsFailed = false;
+
+async function tryLoadFrom(url){
+  const withTimeout = (p, ms) => Promise.race([
+    p,
+    new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms))
+  ]);
+  await withTimeout(faceapi.nets.tinyFaceDetector.loadFromUri(url), 6000);
+  await withTimeout(faceapi.nets.faceLandmark68Net.loadFromUri(url), 6000);
+  await withTimeout(faceapi.nets.faceRecognitionNet.loadFromUri(url), 6000);
+}
+async function loadModels(){
+  modelsFailed = false;
+  for(const url of MODEL_URL_CANDIDATES){
+    try{
+      await tryLoadFrom(url);
+      modelsReady = true;
+      return;
+    }catch(e){
+      console.error('تعذر التحميل من', url, e);
+    }
+  }
+  modelsFailed = true;
+  if(typeof faceStatus !== 'undefined' && sigOverlay && sigOverlay.classList.contains('show')){
+    faceStatus.textContent = 'تعذر الاتصال بخوادم نظام التعرف على الوجه — تحقق من اتصال الإنترنت ثم أعد المحاولة';
+    faceStatus.className = 'face-status err';
+  }
+}
+loadModels();
+
+const sigOverlay = document.getElementById('sigOverlay');
+const camVideo = document.getElementById('camVideo');
+const camPreview = document.getElementById('camPreview');
+const camCtx = camPreview.getContext('2d');
+const snapCanvas = document.getElementById('snapCanvas');
+const faceStatus = document.getElementById('faceStatus');
+const enrollNote = document.getElementById('enrollNote');
+const sigCanvasSection = document.getElementById('sigCanvasSection');
+const sigCanvas = document.getElementById('sigCanvas');
+const sigCtx = sigCanvas.getContext('2d');
+let sigTargetName = null, sigTargetField = null, sigTargetDisplay = null, camStream = null;
+let drawing = false, hasDrawn = false;
+let isEnrollFlow = false;
+let camRAF = null;
+
+/* --- camera rotation fix (real transform pipeline, not CSS-only) ---
+   Some Android WebViews deliver front-camera frames pre-rotated for
+   landscape even when the page/UI is portrait. We draw every frame
+   onto a canvas applying rotation + mirror BEFORE both (a) showing it
+   to the user and (b) running face detection, so preview and analysis
+   are always identical and correctly oriented. Rotation is adjustable
+   on-device (button) and persisted, since exact sensor orientation
+   varies by hardware/WebView build. */
+let camRotation = parseInt(localStorage.getItem('rnd_cam_rotation') || '0', 10);
+document.getElementById('camRotateBtn').addEventListener('click', ()=>{
+  camRotation = (camRotation + 90) % 360;
+  localStorage.setItem('rnd_cam_rotation', String(camRotation));
+});
+
+function drawOrientedFrame(){
+  if(!camVideo.videoWidth){ camRAF = requestAnimationFrame(drawOrientedFrame); return; }
+  const boxW = camPreview.clientWidth || 320;
+  const boxH = camPreview.clientHeight || 280;
+  camPreview.width = boxW * (window.devicePixelRatio||1);
+  camPreview.height = boxH * (window.devicePixelRatio||1);
+  const dpr = window.devicePixelRatio||1;
+
+  const rotated90 = (camRotation === 90 || camRotation === 270);
+  const srcW = camVideo.videoWidth, srcH = camVideo.videoHeight;
+  const effSrcW = rotated90 ? srcH : srcW;
+  const effSrcH = rotated90 ? srcW : srcH;
+
+  const scale = Math.max((boxW*dpr)/effSrcW, (boxH*dpr)/effSrcH);
+  const drawW = srcW*scale, drawH = srcH*scale;
+
+  camCtx.save();
+  camCtx.clearRect(0,0,camPreview.width,camPreview.height);
+  camCtx.translate(camPreview.width/2, camPreview.height/2);
+  camCtx.rotate(camRotation * Math.PI/180);
+  camCtx.scale(-1,1); /* mirror for a natural front-camera feel */
+  camCtx.drawImage(camVideo, -drawW/2, -drawH/2, drawW, drawH);
+  camCtx.restore();
+
+  camRAF = requestAnimationFrame(drawOrientedFrame);
+}
+
+async function startCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    faceStatus.textContent = 'المتصفح لا يدعم الوصول للكاميرا على هذا الرابط (تأكد أنه https)';
+    faceStatus.className = 'face-status err';
+    return;
+  }
+  try{
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode:'user' },
+      audio:false
+    });
+    camVideo.srcObject = camStream;
+    try{ await camVideo.play(); }catch(playErr){ /* some browsers auto-play once srcObject is set anyway */ }
+    camRAF = requestAnimationFrame(drawOrientedFrame);
+    setTimeout(()=>{
+      if(camStream && !camVideo.videoWidth){
+        faceStatus.textContent = `لا توجد إشارة صورة (readyState=${camVideo.readyState}, paused=${camVideo.paused}) — أعد فتح النافذة`;
+        faceStatus.className = 'face-status err';
+      }
+    }, 4000);
+  }catch(e){
+    let msg = 'تعذر تشغيل الكاميرا — تحقق من الأذونات';
+    if(e && e.name === 'NotAllowedError') msg = 'تم رفض إذن الكاميرا — فعّله من إعدادات المتصفح لهذا الموقع';
+    else if(e && e.name === 'NotFoundError') msg = 'لم يتم العثور على كاميرا في هذا الجهاز';
+    else if(e && e.name === 'NotReadableError') msg = 'الكاميرا مستخدمة من تطبيق آخر حاليًا — أغلقه وحاول مجددًا';
+    faceStatus.textContent = msg + (e && e.name ? ` (${e.name})` : '');
+    faceStatus.className = 'face-status err';
+  }
+}
+function stopCamera(){
+  if(camRAF){ cancelAnimationFrame(camRAF); camRAF = null; }
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream = null; }
+}
+
+function setupSigCanvas(){
+  const rect = sigCanvas.getBoundingClientRect();
+  sigCanvas.width = rect.width * devicePixelRatio;
+  sigCanvas.height = rect.height * devicePixelRatio;
+  sigCtx.scale(devicePixelRatio, devicePixelRatio);
+  sigCtx.lineWidth = 2.4; sigCtx.lineCap = 'round'; sigCtx.strokeStyle = '#0B2A4A';
+  sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);
+  hasDrawn = false;
+}
+function getSigPos(e){
+  const rect = sigCanvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX-rect.left, y: t.clientY-rect.top };
+}
+function startDraw(e){ drawing=true; hasDrawn=true; const p=getSigPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); e.preventDefault(); }
+function moveDraw(e){ if(!drawing) return; const p=getSigPos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); e.preventDefault(); }
+function endDraw(){ drawing=false; }
+sigCanvas.addEventListener('mousedown', startDraw);
+sigCanvas.addEventListener('mousemove', moveDraw);
+window.addEventListener('mouseup', endDraw);
+sigCanvas.addEventListener('touchstart', startDraw, {passive:false});
+sigCanvas.addEventListener('touchmove', moveDraw, {passive:false});
+sigCanvas.addEventListener('touchend', endDraw);
+document.getElementById('sigClear').addEventListener('click', ()=>{ sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); hasDrawn=false; });
+
+function euclidean(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=(a[i]-b[i])*(a[i]-b[i]); return Math.sqrt(s); }
+
+function openSigModal(name, field, label, target, displayName){
+  activeTarget = target;
+  sigTargetName = name; sigTargetField = field;
+  sigTargetDisplay = displayName || name;
+  document.getElementById('sigTitle').textContent = `تسجيل ${label} — ${sigTargetDisplay}`;
+  const timeInput = document.getElementById('sigTimeInput');
+  timeInput.value = new Date().toTimeString().slice(0,5);
+
+  isEnrollFlow = !faceBank[name];
+  sigCanvasSection.style.display = isEnrollFlow ? 'block' : 'none';
+  document.getElementById('sigSub').textContent = isEnrollFlow
+    ? 'أول تسجيل لهذا الشخص: التقط الوجه ووقّع توقيعًا واحدًا لربطه بالوجه'
+    : 'اختر الوقت المسجل في جهاز البصمة، ثم وجّه الكاميرا نحو الوجه للتأكيد';
+
+  if(modelsReady){
+    faceStatus.textContent = 'جاهز — وجّه الوجه داخل الإطار';
+    faceStatus.className = 'face-status';
+  } else if(modelsFailed){
+    faceStatus.innerHTML = 'تعذر تحميل نظام التعرف على الوجه — تحقق من اتصال الإنترنت <button id="retryModelsBtn" style="margin-right:8px;background:var(--navy);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:12px;">إعادة المحاولة</button>';
+    faceStatus.className = 'face-status err';
+    document.getElementById('retryModelsBtn').addEventListener('click', async ()=>{
+      faceStatus.textContent = 'جارٍ إعادة المحاولة...'; faceStatus.className = 'face-status';
+      await loadModels();
+      faceStatus.textContent = modelsReady ? 'جاهز — وجّه الوجه داخل الإطار' : 'ما زال التحميل يفشل — تحقق من الشبكة أو تواصل مع الدعم التقني';
+      faceStatus.className = modelsReady ? 'face-status' : 'face-status err';
+    });
+  } else {
+    faceStatus.textContent = 'جارٍ تحميل نظام التعرف على الوجه...';
+    faceStatus.className = 'face-status';
+  }
+  sigOverlay.classList.add('show');
+  startCamera();
+  if(isEnrollFlow) requestAnimationFrame(setupSigCanvas);
+}
+document.getElementById('sigCancel').addEventListener('click', ()=>{ stopCamera(); sigOverlay.classList.remove('show'); });
+
+document.getElementById('reenrollBtn').addEventListener('click', ()=>{
+  if(!sigTargetName) return;
+  if(confirm(`سيتم حذف بصمة الوجه والتوقيع المرجعي الحالي لـ ${sigTargetDisplay}، وسيُطلب توقيع جديد مرة واحدة عند أول التقاط قادم. متابعة؟`)){
+    delete faceBank[sigTargetName]; saveFaces(faceBank);
+    isEnrollFlow = true; sigCanvasSection.style.display = 'block';
+    requestAnimationFrame(setupSigCanvas);
+    faceStatus.textContent = 'تم حذف التسجيل السابق — التقط الوجه ووقّع لتسجيل جديد';
+    faceStatus.className = 'face-status';
+  }
+});
+
+document.getElementById('sigConfirm').addEventListener('click', async ()=>{
+  const timeVal = document.getElementById('sigTimeInput').value;
+  if(!timeVal){ alert('يرجى اختيار الوقت المسجل في جهاز البصمة أولًا'); return; }
+  if(!modelsReady){ faceStatus.textContent='نظام التعرف على الوجه لا يزال قيد التحميل، انتظر لحظة'; faceStatus.className='face-status err'; return; }
+  if(isEnrollFlow && !hasDrawn){ faceStatus.textContent='هذا أول تسجيل لهذا الشخص — يرجى التوقيع أولًا قبل التأكيد'; faceStatus.className='face-status err'; return; }
+
+  /* duplicate-prevention (item 15) */
+  const existingRecord = getActiveRecord(sigTargetName);
+  if(existingRecord[sigTargetField+'_officialTime'] && !isLocked(existingRecord[sigTargetField+'_confirmedAt'])){
+    /* within the 10-minute correction window — allowed, this is a correction not a duplicate */
+  } else if(existingRecord[sigTargetField+'_officialTime'] && isLocked(existingRecord[sigTargetField+'_confirmedAt'])){
+    faceStatus.textContent = `تم تسجيل ${sigTargetField==='checkin'?'حضور':'انصراف'} ${sigTargetDisplay} مسبقًا الساعة ${existingRecord[sigTargetField+'_officialTime']}`;
+    faceStatus.className = 'face-status err';
+    return;
+  }
+
+  faceStatus.textContent = 'جارٍ التحليل...';
+  faceStatus.className = 'face-status';
+
+  /* detection runs on the SAME oriented canvas the user sees — guarantees
+     preview and analysis always match, per the correctness requirement */
+  const detection = await faceapi.detectSingleFace(camPreview, new faceapi.TinyFaceDetectorOptions())
+    .withFaceLandmarks().withFaceDescriptor();
+
+  if(!detection){
+    faceStatus.textContent = 'لم يتم رصد وجه واضح — اقترب من الكاميرا وحاول مجددًا';
+    faceStatus.className = 'face-status err';
+    return;
+  }
+
+  const descriptor = Array.from(detection.descriptor);
+  const stored = faceBank[sigTargetName];
+
+  if(stored){
+    const dist = euclidean(descriptor, stored.descriptor);
+    if(dist > MATCH_THRESHOLD){
+      faceStatus.textContent = 'الوجه غير مطابق لبصمة هذا الشخص — حاول مجددًا';
+      faceStatus.className = 'face-status err';
+      return;
+    }
+  } else {
+    faceBank[sigTargetName] = { descriptor, signature: sigCanvas.toDataURL('image/png'), enrolledAt: new Date().toISOString() };
+    saveFaces(faceBank);
+  }
+
+  /* item 8: keep it light — we do NOT store a fresh photo/snapshot on
+     every daily check-in/out, only the biometric descriptor + the
+     one-time enrollment signature are kept long-term */
+  const rec = getActiveRecord(sigTargetName);
+  rec[sigTargetField+'_officialTime'] = timeVal;
+  rec[sigTargetField+'_confirmedAt'] = new Date().toISOString();
+  saveActiveTarget();
+
+  faceStatus.textContent = 'تم التأكيد بنجاح ✓';
+  faceStatus.className = 'face-status ok';
+  setTimeout(()=>{ stopCamera(); sigOverlay.classList.remove('show'); afterActiveSave(); }, 500);
+});
+
+/* =========================================================
+   STATUS + NOTES MODAL (shared)
+   ========================================================= */
+const statusOverlay = document.getElementById('statusOverlay');
+let statusTargetName = null;
+let statusSelected = null;
+function openStatusModal(name, target, displayName){
+  activeTarget = target;
+  statusTargetName = name;
+  const rec = getActiveRecord(name);
+  statusSelected = rec.status || null;
+  document.getElementById('statusSub').textContent = `اختر حالة اليوم لـ ${displayName || name}`;
+  document.getElementById('statusCustomInput').value = rec.statusCustom || '';
+  document.getElementById('statusNoteInput').value = rec.statusNote || '';
+  document.getElementById('statusCustomWrap').style.display = (statusSelected === 'أخرى') ? 'block' : 'none';
+  document.querySelectorAll('#statusOptions button').forEach(b=> b.classList.toggle('selected', b.dataset.v === statusSelected));
+  statusOverlay.classList.add('show');
+}
+document.querySelectorAll('#statusOptions button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    statusSelected = btn.dataset.v;
+    document.querySelectorAll('#statusOptions button').forEach(b=> b.classList.toggle('selected', b===btn));
+    document.getElementById('statusCustomWrap').style.display = (statusSelected === 'أخرى') ? 'block' : 'none';
+  });
+});
+document.getElementById('statusSaveBtn').addEventListener('click', ()=>{
+  const rec = getActiveRecord(statusTargetName);
+  rec.status = statusSelected;
+  rec.statusCustom = statusSelected === 'أخرى' ? document.getElementById('statusCustomInput').value.trim() : null;
+  rec.statusNote = document.getElementById('statusNoteInput').value.trim() || null;
+  if(rec.status === 'أخرى' && rec.statusCustom) rec.status = rec.statusCustom;
+  saveActiveTarget();
+  statusOverlay.classList.remove('show');
+  afterActiveSave();
+});
+document.getElementById('statusClearBtn').addEventListener('click', ()=>{
+  const rec = getActiveRecord(statusTargetName);
+  rec.status = null; rec.statusCustom = null; rec.statusNote = null;
+  saveActiveTarget();
+  statusOverlay.classList.remove('show');
+  afterActiveSave();
+});
+document.getElementById('statusCancel').addEventListener('click', ()=> statusOverlay.classList.remove('show'));
+
+/* =========================================================
+   EXCEL EXPORTS
+   ========================================================= */
+
+/* --- Daily roster: weekly export (existing feature, hardened + summary sheet added) --- */
+function exportWeekExcel(){
+  if(!currentDate){ alert('افتح يومًا من الرزنامة أولًا'); return; }
+  const start = new Date(currentDate);
+  start.setDate(start.getDate() - start.getDay());
+
+  const detailRows = [["التاريخ","اليوم","الاسم","وقت الحضور","وقت الانصراف","الحالة","الملاحظات"]];
+  let present=0, absent=0, late=0, permission=0, medical=0;
+  for(let i=0;i<7;i++){
+    const d = new Date(start); d.setDate(start.getDate()+i);
+    const key = dayKey(d.getFullYear(), d.getMonth(), d.getDate());
+    const dd = store[key] || {};
+    EMPLOYEES.forEach(name=>{
+      const emp = dd[name] || {};
+      const status = emp.status || 'حاضر';
+      if(status==='حاضر') present++; else if(status==='غائب') absent++;
+      else if(status==='متأخر') late++; else if(status==='استئذان') permission++;
+      else if(status==='طبية') medical++;
+      detailRows.push([
+        fmtDateNum(d), dayNamesShort[d.getDay()], name,
+        emp.checkin_officialTime || '—', emp.checkout_officialTime || '—',
+        status, emp.statusNote || '—'
+      ]);
+    });
+  }
+
+  const wb = XLSX.utils.book_new();
+  const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
+  wsDetail['!cols'] = [{wch:14},{wch:12},{wch:14},{wch:12},{wch:12},{wch:12},{wch:26}];
+  XLSX.utils.book_append_sheet(wb, wsDetail, "التفاصيل");
+
+  const summaryRows = [
+    ["البند","العدد"],
+    ["إجمالي سجلات الحضور (حاضر)", present],
+    ["الغياب", absent],
+    ["التأخير", late],
+    ["الاستئذان", permission],
+    ["الحالات الطبية", medical]
+  ];
+  const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+  wsSummary['!cols'] = [{wch:26},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, wsSummary, "الملخص");
+
+  const label = fmtDateNum(start).replace(/\//g,'-');
+  XLSX.writeFile(wb, `حضور-وانصراف-اسبوع-${label}.xlsx`);
+}
+document.getElementById('exportWeekBtn').addEventListener('click', exportWeekExcel);
+
+/* --- Events: build detail + summary rows for one or more events,
+   iterating every independently-saved date record. dateFilter is
+   optional: fn(Date)->bool, used for the weekly export. --- */
+function buildEventRows(eventList, dateFilter){
+  const rows = [["التاريخ","الفعالية","المحاضر","المكان","بداية الفعالية","نهاية الفعالية","المشارك","الحضور","الانصراف","التأخير (د)","الانصراف المبكر (د)","الحالة","الملاحظات"]];
+  let totalRecords=0, present=0, absent=0, late=0, permission=0, medical=0, delaySum=0, delayCount=0;
+  eventList.forEach(ev=>{
+    const dateKeys = Object.keys(ev.attendanceByDate || {}).sort();
+    dateKeys.forEach(dateKey=>{
+      if(dateFilter && !dateFilter(new Date(dateKey+'T00:00:00'))) return;
+      const dayData = ev.attendanceByDate[dateKey];
+      ev.participants.forEach(name=>{
+        const rec = dayData[name] || {};
+        if(!rec.checkin_officialTime && !rec.checkout_officialTime && !rec.status) return;
+        totalRecords++;
+        const status = rec.status || 'حاضر';
+        if(status==='حاضر') present++; else if(status==='غائب') absent++;
+        else if(status==='متأخر') late++; else if(status==='استئذان') permission++;
+        else if(status==='طبية') medical++;
+        let delayMin = '—';
+        if(rec.checkin_officialTime && ev.startTime){
+          delayMin = minutesOf(rec.checkin_officialTime) - minutesOf(ev.startTime);
+          delaySum += delayMin; delayCount++;
+        }
+        let earlyMin = '—';
+        if(rec.checkout_officialTime && ev.endTime){
+          earlyMin = minutesOf(ev.endTime) - minutesOf(rec.checkout_officialTime);
+        }
+        rows.push([
+          dateKey, ev.title, ev.lecturer || '—', ev.place || '—',
+          ev.startTime || '—', ev.endTime || '—', name,
+          rec.checkin_officialTime || '—', rec.checkout_officialTime || '—',
+          delayMin, earlyMin, status, rec.statusNote || '—'
+        ]);
+      });
+    });
+  });
+  const summaryRows = [
+    ["البند","العدد"],
+    ["عدد الفعاليات", eventList.length],
+    ["إجمالي سجلات الحضور", totalRecords],
+    ["حاضر", present],
+    ["غائب", absent],
+    ["متأخر", late],
+    ["استئذان", permission],
+    ["حالات طبية", medical],
+    ["متوسط التأخير (دقيقة)", delayCount ? Math.round(delaySum/delayCount) : 0]
+  ];
+  return { rows, summaryRows };
+}
+function writeEventWorkbook(rows, summaryRows, filename){
+  const wb = XLSX.utils.book_new();
+  const wsDetail = XLSX.utils.aoa_to_sheet(rows);
+  wsDetail['!cols'] = [{wch:12},{wch:20},{wch:14},{wch:14},{wch:10},{wch:10},{wch:14},{wch:10},{wch:10},{wch:12},{wch:14},{wch:12},{wch:26}];
+  XLSX.utils.book_append_sheet(wb, wsDetail, "التفاصيل");
+  const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+  wsSummary['!cols'] = [{wch:26},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, wsSummary, "الملخص");
+  XLSX.writeFile(wb, filename);
+}
+function exportSingleEventExcel(){
+  const ev = EVENTS[currentEventId];
+  if(!ev){ alert('افتح فعالية أولًا'); return; }
+  if(ev.participants.length === 0){ alert('لا يوجد مشاركون في هذه الفعالية بعد'); return; }
+  const { rows, summaryRows } = buildEventRows([ev]);
+  if(rows.length === 1){ alert('لا توجد سجلات حضور محفوظة لهذه الدورة بعد'); return; }
+  writeEventWorkbook(rows, summaryRows, `دورة-${ev.title}.xlsx`.replace(/\s+/g,'_'));
+}
+document.getElementById('exportSingleEventBtn').addEventListener('click', exportSingleEventExcel);
+
+function exportAllEventsWeekExcel(){
+  const base = currentDate || new Date();
+  const start = new Date(base); start.setDate(start.getDate() - start.getDay());
+  const end = new Date(start); end.setDate(start.getDate()+6);
+  const { rows, summaryRows } = buildEventRows(Object.values(EVENTS), (d)=> d >= start && d <= end);
+  if(rows.length === 1){ alert('لا توجد سجلات حضور فعاليات محفوظة خلال هذا الأسبوع'); return; }
+  const label = fmtDateNum(start).replace(/\//g,'-');
+  writeEventWorkbook(rows, summaryRows, `فعاليات-اسبوع-${label}.xlsx`);
+}
+document.getElementById('exportEventsWeekBtn').addEventListener('click', exportAllEventsWeekExcel);
+
+/* =========================================================
+   LIVE UPDATE FOR LOCKS
+   ========================================================= */
+setInterval(()=>{
+  if(secDay.classList.contains('active')) renderRoster();
+  if(secEventDetail.classList.contains('active') && currentEventId) renderEventDetail(currentEventId);
+}, 30000);
+
+/* =========================================================
+   SERVER SYNC: initial load + polling every 30 seconds
+   ========================================================= */
+function refreshVisibleView(){
+  try{
+    if(isPublicMode){ renderPublicCourseView(); return; }
+    if(secCal.classList.contains('active')) renderMonths();
+    if(secDay.classList.contains('active')) renderRoster();
+    if(secEvents.classList.contains('active')) renderEventsList();
+    if(secEventDetail.classList.contains('active') && currentEventId && EVENTS[currentEventId]) renderEventDetail(currentEventId);
+    if(secDashboard.classList.contains('active')) renderDashboard();
+  }catch(e){ console.error('refresh failed', e); }
+}
+
+/* =========================================================
+   PUBLIC COURSE VIEW (?course=CODE) — poster + each participant's
+   own check-in/check-out only. No admin controls reachable from here.
+   ========================================================= */
+let isPublicMode = false;
+let publicCourseCode = null;
+function findEventByCode(code){
+  return Object.values(EVENTS).find(e=> (e.code||'').toUpperCase() === (code||'').toUpperCase());
+}
+function renderPublicCourseView(){
+  const ev = findEventByCode(publicCourseCode);
+  const root = document.getElementById('publicCourseView');
+  if(!ev){
+    root.innerHTML = `<div class="empty-hint" style="padding:60px 20px;font-size:15px;">لا توجد دورة بهذا الرابط — تحقق من الرمز مع المسؤول</div>`;
+    return;
+  }
+  currentEventId = ev.id;
+  currentEventDateKey = new Date().toISOString().slice(0,10);
+  activeTarget = { type:'event', eventId: ev.id, date: currentEventDateKey };
+
+  document.getElementById('posterLogo').src = document.getElementById('mainLogoImg').src;
+  document.getElementById('posterTitle').textContent = ev.title;
+  document.getElementById('posterMeta').textContent = `المحاضر: ${ev.lecturer || '—'}${ev.supervisor ? '  |  المشرف: '+ev.supervisor : ''}`;
+  document.getElementById('posterTimeBadge').innerHTML = `
+    <div><span class="lbl">تبدأ من</span>${ev.startTime || '—'}</div>
+    <div>→</div>
+    <div><span class="lbl">تنتهي في</span>${ev.endTime || '—'}</div>
+  `;
+  document.getElementById('posterExtra').innerHTML = `
+    ${ev.place ? `<span>📍 ${ev.place}</span>` : ''}
+    ${ev.date ? `<span>📅 ${fmtDateRtl(new Date(ev.date+'T00:00:00'))}</span>` : ''}
+  `;
+
+  const roster = document.getElementById('publicRoster');
+  roster.innerHTML = '';
+  if(ev.participants.length === 0){
+    roster.innerHTML = '<div class="empty-hint">لا يوجد مشاركون مسجَّلون في هذه الدورة بعد</div>';
+    return;
+  }
+  const dayData = getEventDayData(ev, currentEventDateKey);
+  ev.participants.map(normParticipant).forEach(p=>{
+    if(!dayData[p.id]) dayData[p.id] = {};
+    roster.appendChild(buildParticipantRow(p, dayData[p.id], ev, { restricted:true }));
+  });
+}
+
+async function initialServerLoad(){
+  try{
+    let data = await fetchServerState();
+    const legacy = readLegacyLocal();
+    if(isEmptyState(data) && !isEmptyState(legacy)){
+      store = legacy.attendance; faceBank = legacy.faces; EVENTS = legacy.events;
+      await saveAllToServer();
+      data = await fetchServerState();
+    }
+    adoptServerState(data);
+    hideSyncError();
+    refreshVisibleView();
+  }catch(e){
+    console.error('initial load failed', e);
+    showSyncError('تعذر تحميل البيانات من الخادم — تحقق من الاتصال');
+  }
+}
+
+async function pollServer(){
+  if(pendingOps.length){ lastSyncFailed = false; await flushOps(); if(pendingOps.length) return; }
+  /* never swap data out from under an open dialog */
+  if(document.querySelector('.overlay.show')) return;
+  try{
+    const res = await fetch('/api/revision', { cache:'no-store' });
+    if(!res.ok) return;
+    const { revision } = await res.json();
+    if(revision === serverRevision) return;
+    const data = await fetchServerState();
+    if(pendingOps.length || flushing || document.querySelector('.overlay.show')) return;
+    adoptServerState(data);
+    refreshVisibleView();
+  }catch(e){ console.error('poll failed', e); }
+}
+setInterval(pollServer, 30000);
+
+/* =========================================================
+   ROUTING BOOTSTRAP
+   ?course=CODE  → public participant/poster view only
+   ?admin=1      → password gate, then the normal full admin app
+   (neither)     → normal app, unchanged (today's on-kiosk usage)
+   ========================================================= */
+const ADMIN_PASSWORD = 'RnD@2026'; /* CHANGE THIS — see note in the summary */
+const ADMIN_SESSION_KEY = 'rnd_admin_unlocked';
+
+function startNormalApp(){
+  showHome();
+  initialServerLoad();
+}
+function startPublicCourseView(code){
+  isPublicMode = true;
+  publicCourseCode = code;
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('publicCourseView').style.display = 'block';
+  (async ()=>{
+    try{ adoptServerState(await fetchServerState()); }
+    catch(e){ console.error('public view load failed', e); }
+    renderPublicCourseView();
+  })();
+  setInterval(async ()=>{
+    try{
+      const res = await fetch('/api/revision', { cache:'no-store' });
+      if(!res.ok) return;
+      const { revision } = await res.json();
+      if(revision === serverRevision) return;
+      if(document.querySelector('.overlay.show')) return;
+      adoptServerState(await fetchServerState());
+      renderPublicCourseView();
+    }catch(e){}
+  }, 15000);
+}
+function startAdminGate(){
+  if(sessionStorage.getItem(ADMIN_SESSION_KEY) === '1'){ startNormalApp(); return; }
+  const overlay = document.getElementById('adminGateOverlay');
+  overlay.style.display = 'flex'; overlay.classList.add('show');
+  document.getElementById('mainApp').style.display = 'none';
+  const submit = ()=>{
+    const val = document.getElementById('adminGateInput').value;
+    if(val === ADMIN_PASSWORD){
+      sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+      overlay.classList.remove('show'); overlay.style.display = 'none';
+      document.getElementById('mainApp').style.display = '';
+      startNormalApp();
+    } else {
+      document.getElementById('adminGateError').style.display = 'block';
+    }
+  };
+  document.getElementById('adminGateSubmit').addEventListener('click', submit);
+  document.getElementById('adminGateInput').addEventListener('keydown', e=>{ if(e.key==='Enter') submit(); });
+}
+
+/* init */
+const __params = new URLSearchParams(location.search);
+const __courseCode = __params.get('course');
+const __wantsAdmin = __params.get('admin') === '1';
+if(__courseCode){
+  startPublicCourseView(__courseCode);
+} else if(__wantsAdmin){
+  startAdminGate();
+} else {
+  startNormalApp();
+}
+</script>
+</body>
+</html>
